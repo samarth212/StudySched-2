@@ -44,9 +44,9 @@ function SignIn() {
         <button
           type="button"
           onClick={handleClick}
-          className="login-with-google-btn"
+          className=" btn text-white px-16 font-lg login-with-google-btn"
         >
-          Sign In with Google
+          Sign Up
         </button>
       )}
     </div>

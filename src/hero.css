@@ -1,9 +1,10 @@
 body{
-    background-color: white;
+    background-color: rgb(245, 245, 245);
     color: black;
     font-family: 'Nunito', sans-serif;
     font-style: normal;
     font-weight: 800;
+    margin:0px;
 }
 
 .title{
@@ -13,10 +14,21 @@ body{
 }
 
 .desc{
-    color: rgb(150, 150, 150);
+    color: rgb(120, 120, 120);
     font-family: 'Inter';
     font-weight: 600;
     width: 700px;
     margin-top: 0;
     margin-bottom: 60px;
+}
+
+.my-container{
+    text-align: left;
+}
+
+.hero-layout{
+    margin-left: 100px;
+    margin-bottom: 100px;
+    display: flex;
+    align-items: center;
 }
