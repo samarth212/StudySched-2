@@ -1,4 +1,5 @@
 import pkg from 'ical.js';
+import SignIn from './auth/GoogleOAuth';
 const { parse, Component, Event } = pkg;
 function App() {
 
@@ -40,7 +41,7 @@ fetchCalendar('webcal://schoology.dasd.org/calendar/feed/ical/1633885110/78bda1a
 
   return (
     <div>
-      hi
+      <SignIn></SignIn>
 
   </div>
 )
