@@ -26,10 +26,11 @@ async function fetchCalendar(url) {
 
     for (let i = 0; i < events.length; i++) {
       const event = new Event(events[i]);
-      console.log(event)
+     
         console.log('Event:', event.summary);
         console.log('Desc:', event.description);
         console.log('Link:', useRegex(event.description));
+        console.log('Assignment:', useRegex(event.description).includes("assignment"));
         console.log('Starts:', event.startDate.toString());
         console.log('Ends:', event.endDate.toString());
     }
