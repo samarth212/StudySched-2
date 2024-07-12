@@ -1,0 +1,22 @@
+body{
+    background-color: white;
+    color: black;
+    font-family: 'Nunito', sans-serif;
+    font-style: normal;
+    font-weight: 800;
+}
+
+.title{
+    font-size: 52px;
+    width: 700px;
+    margin-bottom: 20px;
+}
+
+.desc{
+    color: rgb(150, 150, 150);
+    font-family: 'Inter';
+    font-weight: 600;
+    width: 700px;
+    margin-top: 0;
+    margin-bottom: 60px;
+}
