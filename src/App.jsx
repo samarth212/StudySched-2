@@ -1,5 +1,4 @@
 import pkg from 'ical.js';
-import Hero from './Hero';
 const { parse, Component, Event } = pkg;
 function App() {
 
@@ -40,9 +39,10 @@ async function fetchCalendar(url) {
 fetchCalendar('webcal://schoology.dasd.org/calendar/feed/ical/1633885110/78bda1ae32ac0554bcd8d8d0aaddd5e1/ical.ics');
 
   return (
-    <>
-    <Hero></Hero>
-    </>
+    <div>
+      hi
+
+  </div>
 )
 }
  
