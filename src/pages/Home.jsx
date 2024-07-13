@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import confetti from 'canvas-confetti';
+import PermanentDrawerLeft from './Drawer';
 const Home = () => {
     const [step, setStep] = useState(1);
     const submitHandler = () => {
@@ -13,7 +14,7 @@ const Home = () => {
                 origin: {
                     x: 0.5,
                     // sice they fall down, start a bit higher than random
-                    y: 1
+                    y: 0.85
                 }
             })
     
@@ -24,7 +25,9 @@ const Home = () => {
 
    
     return (
-      <>
+        <>
+            <PermanentDrawerLeft></PermanentDrawerLeft>
+            <div className="flex justify-center flex-col items-center h-screen w-screen">
             <ul className="steps">
               
   <li className="step step-info">Provide Schoology Calendar Link</li>
@@ -36,7 +39,7 @@ src="https://www.youtube.com/watch?v=j-KHCxjP3n0&ab_channel=AdamMatyska">
             </iframe>
             <button className="btn btn-ghost btn-primary" onClick={submitHandler}>Submit</button>
             <p>{step}</p>
-           
+           </div>
             </>
   )
 }
