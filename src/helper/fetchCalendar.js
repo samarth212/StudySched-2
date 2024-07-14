@@ -1,4 +1,6 @@
 const { parse, Component, Event } = pkg;
+import { getDatabase, ref, set } from "firebase/database";
+import { app } from "../auth/firebase";
 import pkg from "ical.js";
 function useRegex(input) {
   const regex = /- Link: (http[s]?:\/\/\S+)/;
@@ -31,18 +33,22 @@ export default async function fetchCalendar(url, setAssignments) {
     console.log(new Date(event.endDate.toString().split("T")[0]) > new Date());
     if (
       link.includes("/assignment/") &&
-      new Date(event.endDate.toString().split("T")[0]) > new Date("2022-01-01")
+      new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01")
     ) {
       newAssignments.push({
         name: event.summary,
         desciption: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
-        priority: 5,
+        priority: 1,
       });
     }
   }
 
   setAssignments(newAssignments);
-  localStorage.setItem(url, JSON.stringify(newAssignments));
+  const db = getDatabase(app);
+  console.log(localStorage.getItem("uid"));
+  set(ref(db, "assignments/" + localStorage.getItem("uid")), {
+    assignments: newAssignments,
+  });
 }

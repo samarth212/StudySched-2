@@ -1,6 +1,8 @@
 import React from "react";
 import Slider from "@mui/material/Slider";
 import confetti from "canvas-confetti";
+import { getDatabase, ref, set } from "firebase/database";
+import { app } from "../auth/firebase";
 const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
   const handlePrioritySubmit = () => {
     setStep(step + 1);
@@ -15,6 +17,11 @@ const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
         y: 0.85,
       },
     });
+    const db = getDatabase(app);
+    console.log(localStorage.getItem("uid"));
+    set(ref(db, "assignments/" + localStorage.getItem("uid")), {
+      assignments,
+    });
   };
   const handlePriorityChange = (e, index) => {
     console.log(e.target.value);
@@ -23,7 +30,6 @@ const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
     console.log(newAssignments);
     newAssignments[index].priority = e.target.value;
     setAssignments(newAssignments);
-    localStorage.setItem(savedVal, JSON.stringify(newAssignments));
   };
   return (
     <>

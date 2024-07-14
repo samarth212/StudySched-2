@@ -10,6 +10,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_KEY,
   authDomain: "studysched-53cb0.firebaseapp.com",
+  databaseURL: "https://studysched-53cb0-default-rtdb.firebaseio.com",
   projectId: "studysched-53cb0",
   storageBucket: "studysched-53cb0.appspot.com",
   messagingSenderId: "697801131279",
@@ -22,4 +23,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
-export { auth, provider };
+export { auth, provider, app };
