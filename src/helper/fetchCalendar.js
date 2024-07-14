@@ -40,7 +40,7 @@ export default async function fetchCalendar(url, setAssignments) {
         desciption: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
-        priority: 1,
+        priority: 5,
       });
     }
   }
