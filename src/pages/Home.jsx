@@ -25,6 +25,13 @@ const Home = () => {
         })
     }
 
+    const handlePriorityChange = (index, event) => {
+        const newAssignments = [...assignments];
+        newAssignments[index].priority = event.target.value;
+        setAssignments(newAssignments);
+        localStorage.setItem(savedVal, JSON.stringify(newAssignments));
+    };
+
     const [savedVal, setSavedVal] = useState("");
 
     const handleSave = (val) => {
@@ -89,6 +96,7 @@ const Home = () => {
             
         }
         setAssignments(newAssignments);
+        localStorage.setItem(url, JSON.stringify(newAssignments));
         console.log(assignments)
     }
 
@@ -110,7 +118,12 @@ const Home = () => {
 
                 <p className='text-blue-500'>{assignments ? 'Assignments:' : ''}</p>
                 {assignments.map((assignment, index) => (
+                    <>
                     <p className="text-xs" key={index}>{assignment.name}- Due: {assignment.dueDate}</p>
+                    <label htmlFor="">Priority:</label>
+                    <input value={assignment.priority} onChange={(event) => handlePriorityChange(index, event)} className="text-xs bg-white text-black border-2 border-black" type='number' />
+                    </>
+                    
                 ))}
 
                 <iframe width="420" height="315" src="https://www.youtube.com/watch?v=j-KHCxjP3n0&ab_channel=AdamMatyska"></iframe>
