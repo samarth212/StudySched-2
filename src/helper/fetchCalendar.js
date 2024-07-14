@@ -16,8 +16,10 @@ function useRegex(input) {
 
 export default async function fetchCalendar(url, setAssignments) {
   // Replace 'webcal://' with 'http://'
-  const httpUrl = url.replace("webcal://", "http://");
-
+  var httpUrl = url.replace("webcal://", "http://");
+  httpUrl =
+    "https://intelligent-livre-79167-3ea7b481bab0.herokuapp.com/" + httpUrl;
+  console.log(httpUrl);
   const response = await fetch(httpUrl);
   const data = await response.text();
   const jcalData = parse(data);
