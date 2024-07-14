@@ -38,7 +38,7 @@ async function fetchCalendar(url) {
     }
 }
 
-fetchCalendar('webcal://schoology.dasd.org/calendar/feed/ical/1633885110/78bda1ae32ac0554bcd8d8d0aaddd5e1/ical.ics');
+fetchCalendar('webcal://schoology.dasd.org/calendar/feed/ical/1720649393/8ce31bbb9b0e97d56b45830bddc12635/ical.ics');
 
   return (
 

@@ -3,6 +3,9 @@ import confetti from 'canvas-confetti';
 import PermanentDrawerLeft from './Drawer';
 import Step1 from './components/Step1';
 
+import pkg from 'ical.js';
+const { parse, Component, Event } = pkg;
+
 
 const Home = () => {
     const [step, setStep] = useState(1);
@@ -26,8 +29,59 @@ const Home = () => {
 
     const handleSave = (val) => {
         setSavedVal(val);
+        fetchCalendar(val);
         if (step == 1){submitHandler()}
     };
+
+    function useRegex(input) {
+        const regex = /- Link: (http[s]?:\/\/\S+)/;
+        const match = input.match(regex);
+        
+        if (match) {
+        
+         return match[1]
+        } else {
+          console.log("No link found");
+          return null
+        }
+    }
+
+    const [assignments, setAssignments] = useState([])
+
+    async function fetchCalendar(url) {
+        // Replace 'webcal://' with 'http://'
+        const httpUrl = url.replace('webcal://', 'http://');
+    
+        const response = await fetch(httpUrl);
+        const data = await response.text();
+        const jcalData = parse(data);
+        const comp = new Component(jcalData);
+        const events = comp.getAllSubcomponents('vevent');
+        
+        const newAssignments = [];
+
+    
+        for (let i = 0; i < events.length; i++) {
+            const event = new Event(events[i]);
+
+            const link = useRegex(event.description);
+            if (link.includes('/assignment/')){
+                newAssignments.push(event.summary);
+            };
+
+            /*
+            console.log('Event:', event.summary);
+            console.log('Desc:', event.description);
+            console.log('Link:', useRegex(event.description));
+            console.log('Assignment:', useRegex(event.description).includes("assignment"));
+            console.log('Starts:', event.startDate.toString());
+            console.log('Ends:', event.endDate.toString());
+            */
+            
+        }
+        setAssignments(newAssignments);
+        console.log(assignments)
+    }
 
 
    
@@ -44,7 +98,11 @@ const Home = () => {
                 </ul>
 
                 <Step1 onSave={handleSave}></Step1>
-                <p>{savedVal}</p>
+
+                <p className='text-blue-500'>{assignments ? 'Assignments:' : ''}</p>
+                {assignments.map((assignment, index) => (
+                    <p className="text-xs" key={index}>{assignment}</p>
+                ))}
 
                 <iframe width="420" height="315" src="https://www.youtube.com/watch?v=j-KHCxjP3n0&ab_channel=AdamMatyska"></iframe>
 
