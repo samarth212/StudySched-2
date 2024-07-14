@@ -5,7 +5,7 @@ const Stepper = ({ step }) => {
     <ul className="steps mb-2">
       <li className="step step-info">Enter Calendar Link</li>
       <li className={step >= 2 ? "step-info step" : "step-error step"}>
-        Rate Difficulties
+        Set Priorities
       </li>
       <li className={step >= 3 ? "step-info step" : "step-error step"}>
         Schedule Your Studying
