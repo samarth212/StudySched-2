@@ -49,7 +49,7 @@ export default async function fetchCalendar(url, setAssignments) {
   setAssignments(newAssignments);
   const db = getDatabase(app);
   console.log(localStorage.getItem("uid"));
-  set(ref(db, "assignments/" + localStorage.getItem("uid")), {
+  set(ref(db, "users/" + localStorage.getItem("uid")), {
     assignments: newAssignments,
   });
 }
