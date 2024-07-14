@@ -66,7 +66,16 @@ const Home = () => {
 
             const link = useRegex(event.description);
             if (link.includes('/assignment/')){
-                newAssignments.push(event.summary);
+                newAssignments.push({
+                    name: event.summary,
+                    desciption: event.description,
+                    startDate: event.startDate.toString(),
+                    dueDate: event.endDate.toString(),
+                    priority: 1,
+                }
+                   
+                )
+                
             };
 
             /*
@@ -101,7 +110,7 @@ const Home = () => {
 
                 <p className='text-blue-500'>{assignments ? 'Assignments:' : ''}</p>
                 {assignments.map((assignment, index) => (
-                    <p className="text-xs" key={index}>{assignment}</p>
+                    <p className="text-xs" key={index}>{assignment.name}- Due: {assignment.dueDate}</p>
                 ))}
 
                 <iframe width="420" height="315" src="https://www.youtube.com/watch?v=j-KHCxjP3n0&ab_channel=AdamMatyska"></iframe>
