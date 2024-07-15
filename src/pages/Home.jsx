@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
 import SideDrawer from "./Drawer";
-import Step1 from "../components/Step1";
-import Stepper from "../components/Stepper";
-
-import Step2 from "../components/Step2";
+import Tutorial from "../components/Tutorial";
 import fetchCalendar from "../helper/fetchCalendar";
-
+import { getDatabase, ref, get } from "firebase/database";
+import { app } from "../auth/firebase";
+import Dashboard from "./Dashboard";
 const Home = () => {
   const [step, setStep] = useState(1);
+  const [currentUIDs, setCurrentUID] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [loading, isLoading] = useState(true);
   const submitHandler = () => {
     setStep(step + 1);
     confetti({
@@ -26,7 +28,25 @@ const Home = () => {
   function valuetext(value) {
     return `${value}°C`;
   }
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const db = getDatabase(app);
+      const dbRef = ref(db, "users/");
+      const snapshot = await get(dbRef);
+      var newUIDs = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          console.log(child.key, child.val());
+          newUIDs.push(child.key);
+        });
+      } else {
+        console.log("No data available");
+      }
+      setCurrentUID(newUIDs);
+      isLoading(false);
+    };
+    fetchData();
+  }, []);
   const [savedVal, setSavedVal] = useState("");
 
   const handleSave = (val) => {
@@ -37,31 +57,27 @@ const Home = () => {
     }
   };
 
-  const [assignments, setAssignments] = useState([]);
-
   return (
-    <>
+    <div className="h-screen w-screen">
       <SideDrawer></SideDrawer>
+      {console.log(currentUIDs)}
+      {console.log(localStorage.getItem("uid"))}
 
-      <div className="flex justify-center flex-col items-center h-screen w-screen">
-        <div className="card bg-slate-200 shadow-xl p-16">
-          <Stepper step={step}></Stepper>
-          {step == 1 && (
-            <Step1 onSave={handleSave} setStep={setStep} step={step}></Step1>
-          )}
-
-          {step == 2 && (
-            <Step2
-              setStep={setStep}
-              step={step}
-              assignments={assignments}
-              setAssignments={setAssignments}
-              savedVal={savedVal}
-            ></Step2>
-          )}
-        </div>
-      </div>
-    </>
+      {currentUIDs.includes(localStorage.getItem("uid")) ? (
+        <Dashboard></Dashboard>
+      ) : (
+        !isLoading && (
+          <Tutorial
+            setStep={setStep}
+            step={step}
+            assignments={assignments}
+            setAssignments={setAssignments}
+            savedVal={savedVal}
+            handleSave={handleSave}
+          ></Tutorial>
+        )
+      )}
+    </div>
   );
 };
 

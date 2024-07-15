@@ -32,7 +32,7 @@ export default async function fetchCalendar(url, setAssignments) {
     const event = new Event(events[i]);
 
     const link = useRegex(event.description);
-    console.log(new Date(event.endDate.toString().split("T")[0]) > new Date());
+
     if (
       link.includes("/assignment/") &&
       new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01")
@@ -49,7 +49,7 @@ export default async function fetchCalendar(url, setAssignments) {
 
   setAssignments(newAssignments);
   const db = getDatabase(app);
-  console.log(localStorage.getItem("uid"));
+
   set(ref(db, "users/" + localStorage.getItem("uid")), {
     assignments: newAssignments,
   });
