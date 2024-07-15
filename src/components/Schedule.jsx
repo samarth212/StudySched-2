@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react"
 
 const Schedule = () => {
 
-    const testAssignments = [
+    const [testAssignments, setTestAssignments] = useState([
         {
             name: "Math AA Test on Derivatives",
             description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus deserunt laudantium aliquid quis itaque adipisci inventore deleniti ratione consequatur quas.",
@@ -85,10 +85,50 @@ const Schedule = () => {
             endDate: "8/29/24",
             priority: 4
         }
-    ];
+    ]);
     
+    const sortAssignments = (assignments) =>{
 
+        const sortedAssignments = assignments.sort((a, b) => {
+            const dateA = new Date(a.startDate);
+            const dateB = new Date(b.startDate);
+            if (dateA < dateB) return -1;
+            if (dateA > dateB) return 1;
+            if (a.priority < b.priority) return 1;
+            if (a.priority > b.priority) return -1;
+            return 0;
+        });
 
+        const schedule = {};
+
+        sortedAssignments.forEach((assignment) => {
+            const startDate = new Date(assignment.startDate);
+            const endDate = new Date(assignment.endDate);
+            const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+
+            for (let i = 0; i <= days; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                const dateString = currentDate.toISOString().split('T')[0];
+
+                if (!schedule[dateString]) {
+                    schedule[dateString] = [];
+                }
+
+                schedule[dateString].push(assignment);
+            }
+        });
+
+        return schedule;
+    
+    };
+
+    const [schedule, setSchedule] = useState({});   
+
+    useEffect(() => {
+        const allocatedSchedule = sortAssignments(testAssignments);
+        setSchedule(allocatedSchedule);
+    }, [testAssignments]);
 
     return (
         <>
@@ -96,26 +136,27 @@ const Schedule = () => {
                 <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
                 <p className="text-center">View your study schedule</p>
 
-                <div className="flex flex-col">
-                    {testAssignments.map((assignment, index) => (
-                    <div key={index} className="flex items-center mb-4 mt-12">
-                        <div className="mr-4">
-                            {assignment.startDate}
-                        </div>
-
-                        <div className="card shadow-lg bg-slate-500 flex-1">
-                            <div className="card-body">
-                                <h2 className="card-title text-white">
-                                    {assignment.name}
-                                    <div className="badge badge-secondary text-white ml-2">{assignment.priority} Hours</div>
-                                </h2>
-                                <div className="card-actions justify-end">
-                                    <div className="badge badge-outline text-white">Due: {assignment.endDate}</div>
-                                    <div className="badge badge-outline text-white">Assignment</div>
+                <div className="flex flex-col overflow-y-auto">
+                    {Object.keys(schedule).map((date, index) => (
+                    <div key={index} className="flex-col items-center mb-4 mt-12">
+                        <p className="text-xl font-semibold">{date}</p>
+                        {schedule[date].map((assignment, idx) => (
+                            <div key={idx} className="flex items-center mt-4">
+                                <div className="card shadow-lg bg-slate-500 flex-1">
+                                    <div className="card-body">
+                                        <h2 className="card-title text-white">
+                                            {assignment.name}
+                                            <div className="badge badge-secondary text-white ml-2">{assignment.priority} Hours</div>
+                                        </h2>
+                                        <div className="card-actions justify-end">
+                                            <div className="badge badge-outline text-white">Due: {assignment.endDate}</div>
+                                            <div className="badge badge-outline text-white">Assignment</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        ))}
                         </div>
-                    </div>
                 ))}
                 </div>
             </div>
