@@ -1,6 +1,6 @@
 import "./schedule.css"
 import { useState, useEffect, useRef } from "react"
-
+import Modal from "./Modal";
 
 /*
         name: event.summary,
@@ -86,6 +86,10 @@ const Schedule = () => {
             priority: 4
         }
     ]);
+
+
+    const [selectedAssignment, setSelectedAssignment] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     
     const sortAssignments = (assignments) =>{
 
@@ -130,6 +134,11 @@ const Schedule = () => {
         setSchedule(allocatedSchedule);
     }, [testAssignments]);
 
+    const handleAssignmentClick = (assignment) => {
+        setSelectedAssignment(assignment);
+        setShowModal(true);
+    };
+
     return (
         <>
             <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5">
@@ -141,7 +150,7 @@ const Schedule = () => {
                     <div key={index} className="flex-col items-center mb-4 mt-12">
                         <p className="text-xl font-semibold">{date}</p>
                         {schedule[date].map((assignment, idx) => (
-                            <div key={idx} className="flex items-center mt-4">
+                            <div key={idx} className="flex items-center mt-4" onClick={() => handleAssignmentClick(assignment)}>
                                 <div className="card shadow-lg bg-slate-500 flex-1">
                                     <div className="card-body">
                                         <h2 className="card-title text-white">
@@ -160,7 +169,12 @@ const Schedule = () => {
                 ))}
                 </div>
             </div>
-    </>
+            <Modal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                assignment={selectedAssignment}
+            />
+        </>
     );
 };
 
