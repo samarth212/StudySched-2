@@ -214,7 +214,7 @@ const Schedule = () => {
               {day.map((assignment, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center mt-4"
+                  className="flex items-center mt-4 cursor-pointer"
                   onClick={() => handleAssignmentClick(assignment)}
                 >
                   <div className="card shadow-lg bg-slate-500 flex-1">
