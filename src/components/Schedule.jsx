@@ -99,27 +99,27 @@ const Schedule = () => {
 
   const sortAssignments = (assignments) => {
     const sortedAssignments = assignments.sort((a, b) => {
-      const dateA = new Date(a.startDate);
-      const dateB = new Date(b.startDate);
+      const dateA = new Date(a.endDate);
+      const dateB = new Date(b.endDate);
       if (dateA < dateB) return -1;
       if (dateA > dateB) return 1;
       if (a.priority < b.priority) return 1;
       if (a.priority > b.priority) return -1;
       return 0;
     });
-
+    console.log(sortedAssignments);
     const schedule = {};
 
     sortedAssignments.forEach((assignment) => {
       const startDate = new Date(assignment.startDate);
       const endDate = new Date(assignment.endDate);
       const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
-
+      console.log(days);
       for (let i = 0; i <= days; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
         const dateString = currentDate.toISOString().split("T")[0];
-
+        console.log(dateString);
         if (!schedule[dateString]) {
           schedule[dateString] = [];
         }
@@ -127,7 +127,7 @@ const Schedule = () => {
         schedule[dateString].push(assignment);
       }
     });
-
+    console.log(schedule);
     return schedule;
   };
 

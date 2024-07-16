@@ -10,7 +10,7 @@ const Home = () => {
   const [step, setStep] = useState(1);
   const [currentUIDs, setCurrentUID] = useState([]);
   const [assignments, setAssignments] = useState([]);
-  const [loading, isLoading] = useState(true);
+  const [loading, setIsLoading] = useState(true);
   const submitHandler = () => {
     setStep(step + 1);
     confetti({
@@ -36,14 +36,13 @@ const Home = () => {
       var newUIDs = [];
       if (snapshot.exists()) {
         snapshot.forEach((child) => {
-          console.log(child.key, child.val());
           newUIDs.push(child.key);
         });
       } else {
         console.log("No data available");
       }
       setCurrentUID(newUIDs);
-      isLoading(false);
+      setIsLoading(false);
     };
     fetchData();
   }, []);
@@ -60,13 +59,11 @@ const Home = () => {
   return (
     <div className="h-screen w-screen">
       <SideDrawer></SideDrawer>
-      {console.log(currentUIDs)}
-      {console.log(localStorage.getItem("uid"))}
 
       {currentUIDs.includes(localStorage.getItem("uid")) ? (
         <Dashboard></Dashboard>
       ) : (
-        !isLoading && (
+        !loading && (
           <Tutorial
             setStep={setStep}
             step={step}
