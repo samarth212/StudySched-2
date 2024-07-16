@@ -195,7 +195,7 @@ const Schedule = () => {
   }, []);
 
   const handleAssignmentClick = (assignment) => {
-    setSelectedAssignment(assignment);
+    setSelectedAssignment(assignment.assignment);
     setShowModal(true);
   };
 
