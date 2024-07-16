@@ -10,6 +10,7 @@ const Home = () => {
   const [step, setStep] = useState(1);
   const [currentUIDs, setCurrentUID] = useState([]);
   const [assignments, setAssignments] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setIsLoading] = useState(true);
   const submitHandler = () => {
     setStep(step + 1);
@@ -50,7 +51,7 @@ const Home = () => {
 
   const handleSave = (val) => {
     setSavedVal(val);
-    fetchCalendar(val, setAssignments);
+    fetchCalendar(val, setAssignments, setEvents);
     if (step == 1) {
       submitHandler();
     }

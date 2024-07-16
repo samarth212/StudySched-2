@@ -14,7 +14,7 @@ function useRegex(input) {
   }
 }
 
-export default async function fetchCalendar(url, setAssignments) {
+export default async function fetchCalendar(url, setAssignments, setEvents) {
   // Replace 'webcal://' with 'http://'
   var httpUrl = url.replace("webcal://", "http://");
   httpUrl =
@@ -27,6 +27,7 @@ export default async function fetchCalendar(url, setAssignments) {
   const events = comp.getAllSubcomponents("vevent");
 
   const newAssignments = [];
+  const newEvents = [];
 
   for (let i = 0; i < events.length; i++) {
     const event = new Event(events[i]);
@@ -42,15 +43,33 @@ export default async function fetchCalendar(url, setAssignments) {
         desciption: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
-        priority: 5,
+        hoursRequired: 5,
+        hoursWorked: 0,
+      });
+    }
+    if (
+      !link.includes("/assignment/") &&
+      new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01")
+    ) {
+      newEvents.push({
+        name: event.summary,
+        desciption: event.description,
+        startDate: event.startDate.toString().split("T")[0],
+        dueDate: event.endDate.toString().split("T")[0],
+        hoursRequired: 5,
+        hoursWorked: 0,
       });
     }
   }
 
   setAssignments(newAssignments);
+  setEvents(newEvents);
   const db = getDatabase(app);
 
-  set(ref(db, "users/" + localStorage.getItem("uid")), {
+  set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
     assignments: newAssignments,
+  });
+  set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
+    events: newEvents,
   });
 }

@@ -19,7 +19,7 @@ const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
     });
     const db = getDatabase(app);
     console.log(localStorage.getItem("uid"));
-    set(ref(db, "users/" + localStorage.getItem("uid")), {
+    set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
       assignments,
     });
   };
@@ -28,7 +28,7 @@ const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
     console.log(index);
     const newAssignments = [...assignments];
     console.log(newAssignments);
-    newAssignments[index].priority = e.target.value;
+    newAssignments[index].hoursRequired = e.target.value;
     setAssignments(newAssignments);
   };
   return (
