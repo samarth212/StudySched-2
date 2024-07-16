@@ -2,16 +2,13 @@ import "./schedule.css";
 import { useState, useEffect, useRef } from "react";
 import Modal from "./Modal";
 
-
-
 /*
         name: event.summary,
         desciption: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
-        priority: 5
+        hoursRequired: 5
 */
-
 
 const Schedule = () => {
   const testAssignments = [
@@ -21,7 +18,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus deserunt laudantium aliquid quis itaque adipisci inventore deleniti ratione consequatur quas.",
       startDate: "7/15/24",
       endDate: "7/20/24",
-      priority: 5,
+      hoursRequired: 5,
+      hoursWorked: 0,
     },
     {
       name: "Physics Quiz on Newton's Laws",
@@ -29,7 +27,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       startDate: "7/16/24",
       endDate: "7/21/24",
-      priority: 5,
+      hoursRequired: 5,
+      hoursWorked: 0,
     },
     {
       name: "Chemistry Lab Report",
@@ -37,7 +36,8 @@ const Schedule = () => {
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       startDate: "7/17/24",
       endDate: "7/22/24",
-      priority: 5,
+      hoursRequired: 5,
+      hoursWorked: 0,
     },
     {
       name: "History Essay on World War II",
@@ -45,7 +45,8 @@ const Schedule = () => {
         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
       startDate: "7/18/24",
       endDate: "7/23/24",
-      priority: 6,
+      hoursRequired: 6,
+      hoursWorked: 0,
     },
     {
       name: "Biology Project on Photosynthesis",
@@ -53,7 +54,8 @@ const Schedule = () => {
         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       startDate: "7/19/24",
       endDate: "7/24/24",
-      priority: 6,
+      hoursRequired: 6,
+      hoursWorked: 0,
     },
     {
       name: "English Literature Analysis",
@@ -61,7 +63,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
       startDate: "7/20/24",
       endDate: "7/25/24",
-      priority: 1,
+      hoursRequired: 1,
+      hoursWorked: 0,
     },
     {
       name: "Computer Science Algorithm Assignment",
@@ -69,7 +72,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc aliquet bibendum enim facilisis gravida.",
       startDate: "7/21/24",
       endDate: "7/26/24",
-      priority: 2,
+      hoursRequired: 2,
+      hoursWorked: 0,
     },
     {
       name: "Economics Research Paper",
@@ -77,7 +81,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis, auctor consequat urna.",
       startDate: "7/22/24",
       endDate: "7/27/24",
-      priority: 9,
+      hoursRequired: 9,
+      hoursWorked: 0,
     },
     {
       name: "Philosophy Debate Preparation",
@@ -85,7 +90,8 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia nunc ac vestibulum mollis.",
       startDate: "7/23/24",
       endDate: "7/28/24",
-      priority: 5,
+      hoursRequired: 5,
+      hoursWorked: 0,
     },
     {
       name: "Art History Presentation",
@@ -93,36 +99,38 @@ const Schedule = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec felis id lacus vestibulum lobortis.",
       startDate: "7/24/24",
       endDate: "8/29/24",
-      priority: 4,
+      hoursRequired: 4,
+      hoursWorked: 0,
     },
-  ]
+  ];
+
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [finalSchedule, setFinalSchedule] = useState([]);
-  
-  var scheduler = []
+
+  var scheduler = [];
   const availableHours = 4;
-  
+
   const sortAssignments = (assignments) => {
-    const tempArray = [].concat(assignments);
+    console.log(assignments[0]);
+    const tempArray = [...assignments];
     tempArray.sort((a, b) => {
       const dateA = new Date(a.endDate);
       const dateB = new Date(b.endDate);
       if (dateA < dateB) return -1;
       if (dateA > dateB) return 1;
-      if (a.priority < b.priority) return 1;
-      if (a.priority > b.priority) return -1;
+      if (a.hoursRequired < b.hoursRequired) return 1;
+      if (a.hoursRequired > b.hoursRequired) return -1;
       return 0;
     });
-    
 
     const startDate = new Date();
-    const endDate = new Date('6/07/25');
+    const endDate = new Date("6/07/25");
     const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
 
     scheduler = Array.from({ length: Math.floor(days) }, () => []);
-    // you have a total set amount of available hours each day, lets say 5, and 10 assignments. assignemnts are represnted in an array, that contains an object for each assignment. the object includes the end date, the amount of hours required to complete the assignment, and the amount of hours that it has been worked on. you need to create an algorhtm that creates a schedule that contains the assignments allocated througout the days. in javascript. 
-console.log(tempArray)
+    // you have a total set amount of available hours each day, lets say 5, and 10 assignments. assignemnts are represnted in an array, that contains an object for each assignment. the object includes the end date, the amount of hours required to complete the assignment, and the amount of hours that it has been worked on. you need to create an algorhtm that creates a schedule that contains the assignments allocated througout the days. in javascript.
+    console.log(tempArray[0]);
     for (let i = 0; i < days; i++) {
       let tempAvailableHours = availableHours;
       while (tempAvailableHours > 0 && tempArray.length > 0) {
@@ -132,58 +140,78 @@ console.log(tempArray)
 
           if (timeLeft > tempAvailableHours) {
             assignment.hoursWorked += tempAvailableHours;
-            scheduler[i].push({ assignment, hoursAllocated: tempAvailableHours, name:assignment.name, totalNeeded:assignment.hoursRequired});
+            var d = new Date();
+            d.setDate(d.getDate() + i);
+            scheduler[i].push({
+              assignment,
+              hoursAllocated: tempAvailableHours,
+              name: assignment.name,
+              totalNeeded: assignment.hoursRequired,
+              dateOfCompletion: d.toISOString().split("T")[0],
+            });
             tempAvailableHours = 0;
             break;
-          }
-          else if (timeLeft == tempAvailableHours) {
-            scheduler[i].push({ assignment, hoursAllocated: timeLeft, name:assignment.name, totalNeeded:assignment.hoursRequired});
+          } else if (timeLeft == tempAvailableHours) {
+            var d = new Date();
+            d.setDate(d.getDate() + i);
+            assignment.hoursWorked = 0;
+            scheduler[i].push({
+              assignment,
+              hoursAllocated: timeLeft,
+              name: assignment.name,
+              totalNeeded: assignment.hoursRequired,
+              dateOfCompletion: d.toISOString().split("T")[0],
+            });
             tempAvailableHours -= timeLeft;
             tempArray.splice(j, 1);
             break;
-          }
-          else {
-            scheduler[i].push({ assignment, hoursAllocated: timeLeft, name:assignment.name, totalNeeded:assignment.hoursRequired });
+          } else {
+            var d = new Date();
+            d.setDate(d.getDate() + i);
+            assignment.hoursWorked = 0;
+            scheduler[i].push({
+              assignment,
+              hoursAllocated: timeLeft,
+              name: assignment.name,
+              totalNeeded: assignment.hoursRequired,
+
+              dateOfCompletion: d.toISOString().split("T")[0],
+            });
             tempAvailableHours -= timeLeft;
             tempArray.splice(j, 1);
-    
-            
           }
         }
       }
     }
 
-    console.log(scheduler)
-    
+    console.log(scheduler);
+
     return scheduler;
   };
 
- 
-  
-
-  
   useEffect(() => {
-
-      const allocatedSchedule = sortAssignments(testAssignments);
-      setFinalSchedule(allocatedSchedule);
+    const allocatedSchedule = sortAssignments(testAssignments);
+    setFinalSchedule(allocatedSchedule);
   }, []);
 
-    const handleAssignmentClick = (assignment) => {
-      setSelectedAssignment(assignment);
-      setShowModal(true);
-    };
+  const handleAssignmentClick = (assignment) => {
+    setSelectedAssignment(assignment);
+    setShowModal(true);
+  };
 
-    return (
-      <>
-         <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
+  return (
+    <>
+      <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-{console.log(finalSchedule)}
+        {console.log(finalSchedule)}
         <div className="flex flex-col overflow-y-auto">
-          {finalSchedule.map((date, index) => (
+          {finalSchedule.map((day, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
-              <p className="text-xl font-semibold">{date}</p>
-              {scheduler[date].map((assignment, idx) => (
+              <p className="text-xl font-semibold">
+                {day[0]?.dateOfCompletion}
+              </p>
+              {day.map((assignment, idx) => (
                 <div
                   key={idx}
                   className="flex items-center mt-4"
@@ -194,12 +222,12 @@ console.log(tempArray)
                       <h2 className="card-title text-white">
                         {assignment.name}
                         <div className="badge badge-secondary text-white ml-2">
-                          {assignment.priority} Hours
+                          {assignment.hoursAllocated} Hours
                         </div>
                       </h2>
                       <div className="card-actions justify-end">
                         <div className="badge badge-outline text-white">
-                          Due: {assignment.endDate}
+                          Due: {assignment.assignment.endDate}
                         </div>
                         <div className="badge badge-outline text-white">
                           Assignment
@@ -217,9 +245,9 @@ console.log(tempArray)
         show={showModal}
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
-      /> 
-      </>
-    );
+      />
+    </>
+  );
 };
 
 export default Schedule;
