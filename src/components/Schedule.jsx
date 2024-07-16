@@ -2,6 +2,8 @@ import "./schedule.css";
 import { useState, useEffect, useRef } from "react";
 import Modal from "./Modal";
 
+
+
 /*
         name: event.summary,
         desciption: event.description,
@@ -10,8 +12,9 @@ import Modal from "./Modal";
         priority: 5
 */
 
+
 const Schedule = () => {
-  const [testAssignments, setTestAssignments] = useState([
+  const testAssignments = [
     {
       name: "Math AA Test on Derivatives",
       description:
@@ -92,13 +95,17 @@ const Schedule = () => {
       endDate: "8/29/24",
       priority: 4,
     },
-  ]);
-
+  ]
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const [finalSchedule, setFinalSchedule] = useState([]);
+  
+  var scheduler = []
+  const availableHours = 4;
+  
   const sortAssignments = (assignments) => {
-    const sortedAssignments = assignments.sort((a, b) => {
+    const tempArray = [].concat(assignments);
+    tempArray.sort((a, b) => {
       const dateA = new Date(a.endDate);
       const dateB = new Date(b.endDate);
       if (dateA < dateB) return -1;
@@ -107,53 +114,76 @@ const Schedule = () => {
       if (a.priority > b.priority) return -1;
       return 0;
     });
-    console.log(sortedAssignments);
-    const schedule = {};
+    
 
-    sortedAssignments.forEach((assignment) => {
-      const startDate = new Date(assignment.startDate);
-      const endDate = new Date(assignment.endDate);
-      const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
-      console.log(days);
-      for (let i = 0; i <= days; i++) {
-        const currentDate = new Date(startDate);
-        currentDate.setDate(startDate.getDate() + i);
-        const dateString = currentDate.toISOString().split("T")[0];
-        console.log(dateString);
-        if (!schedule[dateString]) {
-          schedule[dateString] = [];
+    const startDate = new Date();
+    const endDate = new Date('6/07/25');
+    const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+
+    scheduler = Array.from({ length: Math.floor(days) }, () => []);
+    // you have a total set amount of available hours each day, lets say 5, and 10 assignments. assignemnts are represnted in an array, that contains an object for each assignment. the object includes the end date, the amount of hours required to complete the assignment, and the amount of hours that it has been worked on. you need to create an algorhtm that creates a schedule that contains the assignments allocated througout the days. in javascript. 
+console.log(tempArray)
+    for (let i = 0; i < days; i++) {
+      let tempAvailableHours = availableHours;
+      while (tempAvailableHours > 0 && tempArray.length > 0) {
+        for (let j = 0; j < tempArray.length; j++) {
+          let assignment = tempArray[j];
+          let timeLeft = assignment.hoursRequired - assignment.hoursWorked;
+
+          if (timeLeft > tempAvailableHours) {
+            assignment.hoursWorked += tempAvailableHours;
+            scheduler[i].push({ assignment, hoursAllocated: tempAvailableHours, name:assignment.name, totalNeeded:assignment.hoursRequired});
+            tempAvailableHours = 0;
+            break;
+          }
+          else if (timeLeft == tempAvailableHours) {
+            scheduler[i].push({ assignment, hoursAllocated: timeLeft, name:assignment.name, totalNeeded:assignment.hoursRequired});
+            tempAvailableHours -= timeLeft;
+            tempArray.splice(j, 1);
+            break;
+          }
+          else {
+            scheduler[i].push({ assignment, hoursAllocated: timeLeft, name:assignment.name, totalNeeded:assignment.hoursRequired });
+            tempAvailableHours -= timeLeft;
+            tempArray.splice(j, 1);
+    
+            
+          }
         }
-
-        schedule[dateString].push(assignment);
       }
-    });
-    console.log(schedule);
-    return schedule;
+    }
+
+    console.log(scheduler)
+    
+    return scheduler;
   };
 
-  const [schedule, setSchedule] = useState({});
+ 
+  
 
+  
   useEffect(() => {
-    const allocatedSchedule = sortAssignments(testAssignments);
-    setSchedule(allocatedSchedule);
-  }, [testAssignments]);
 
-  const handleAssignmentClick = (assignment) => {
-    setSelectedAssignment(assignment);
-    setShowModal(true);
-  };
+      const allocatedSchedule = sortAssignments(testAssignments);
+      setFinalSchedule(allocatedSchedule);
+  }, []);
 
-  return (
-    <>
-      <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
+    const handleAssignmentClick = (assignment) => {
+      setSelectedAssignment(assignment);
+      setShowModal(true);
+    };
+
+    return (
+      <>
+         <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-
+{console.log(finalSchedule)}
         <div className="flex flex-col overflow-y-auto">
-          {Object.keys(schedule).map((date, index) => (
+          {finalSchedule.map((date, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">{date}</p>
-              {schedule[date].map((assignment, idx) => (
+              {scheduler[date].map((assignment, idx) => (
                 <div
                   key={idx}
                   className="flex items-center mt-4"
@@ -187,9 +217,9 @@ const Schedule = () => {
         show={showModal}
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
-      />
-    </>
-  );
+      /> 
+      </>
+    );
 };
 
 export default Schedule;
