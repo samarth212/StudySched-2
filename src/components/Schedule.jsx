@@ -220,8 +220,8 @@ const Schedule = () => {
                   <div className="card shadow-lg bg-slate-500 flex-1">
                     <div className="card-body">
                       <h2 className="card-title text-white">
-                        {assignment.name}
-                        <div className="badge badge-secondary text-white ml-2">
+                        {assignment.name.length < 29 ? assignment.name : assignment.name.substring(0, 22).concat("...")}
+                        <div className="badge badge-secondary text-white ml-2 w-22">
                           {assignment.hoursAllocated} Hours
                         </div>
                       </h2>
