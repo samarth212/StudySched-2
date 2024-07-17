@@ -49,7 +49,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     }
     if (
       !link.includes("/assignment/") &&
-      new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01")
+      new Date(event.endDate.toString().split("T")[0]) > new Date("2021-01-01")
     ) {
       newEvents.push({
         name: event.summary,
@@ -65,11 +65,11 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
   setAssignments(newAssignments);
   setEvents(newEvents);
   const db = getDatabase(app);
+  console.log(newEvents);
 
   set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
     assignments: newAssignments,
-  });
-  set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
     events: newEvents,
+    hoursPerDay: 4,
   });
 }

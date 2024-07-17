@@ -1,9 +1,9 @@
 import React from "react";
 import Slider from "@mui/material/Slider";
 import confetti from "canvas-confetti";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, update } from "firebase/database";
 import { app } from "../auth/firebase";
-const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
+const Step2 = ({ setStep, assignments, step, setAssignments }) => {
   const handlePrioritySubmit = () => {
     setStep(step + 1);
     confetti({
@@ -19,13 +19,11 @@ const Step2 = ({ setStep, assignments, step, setAssignments, savedVal }) => {
     });
     const db = getDatabase(app);
     console.log(localStorage.getItem("uid"));
-    set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
+    update(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
       assignments,
     });
   };
   const handlePriorityChange = (e, index) => {
-    console.log(e.target.value);
-    console.log(index);
     const newAssignments = [...assignments];
     console.log(newAssignments);
     newAssignments[index].hoursRequired = e.target.value;

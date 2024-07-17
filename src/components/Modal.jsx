@@ -26,7 +26,7 @@ const Modal = ({ show, onClose, assignment }) => {
                     Start Date: {assignment.startDate}
                   </p>
                   <p className="text-sm text-gray-500">
-                    End Date: {assignment.endDate}
+                    End Date: {assignment.dueDate}
                   </p>
                   <p className="text-sm text-gray-500">
                     Hours Required: {assignment.hoursRequired}
