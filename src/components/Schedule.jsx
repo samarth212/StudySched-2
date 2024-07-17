@@ -115,10 +115,7 @@ const Schedule = () => {
 
   const sortAssignments = (unsortedAssignments) => {
     const tempArray = [...unsortedAssignments];
-    console.log(tempArray[0]);
-    console.log(tempArray[1]);
-    console.log(tempArray[2]);
-    console.log(tempArray[3]);
+
     tempArray.sort((a, b) => {
       const dateA = new Date(a.dueDate);
       const dateB = new Date(b.dueDate);
@@ -128,10 +125,7 @@ const Schedule = () => {
       if (a.hoursRequired > b.hoursRequired) return -1;
       return 0;
     });
-    console.log(tempArray[0]);
-    console.log(tempArray[1]);
-    console.log(tempArray[2]);
-    console.log(tempArray[3]);
+
     const startDate = new Date();
     const endDate = new Date("6/07/25");
     const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
