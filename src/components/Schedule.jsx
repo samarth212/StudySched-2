@@ -199,6 +199,27 @@ const Schedule = () => {
     setShowModal(true);
   };
 
+  function formatDate(dateString) {
+
+    if (!dateString){
+      return null
+    }
+    const date = new Date(dateString);
+  
+    const options = { weekday: 'long' };
+    const dayOfWeek = new Intl.DateTimeFormat('en-US', options).format(date);
+  
+    const monthOptions = { month: 'long' };
+    const month = new Intl.DateTimeFormat('en-US', monthOptions).format(date);
+  
+    const day = date.getDate();
+    const dayWithOrdinal = day + (day % 10 === 1 && day !== 11 ? "st" : day % 10 === 2 && day !== 12 ? "nd" : day % 10 === 3 && day !== 13 ? "rd" : "th");
+  
+    const year = date.getFullYear();
+  
+    return `${dayOfWeek}, ${month} ${dayWithOrdinal}, ${year}`;
+  }
+
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
@@ -209,12 +230,12 @@ const Schedule = () => {
           {finalSchedule.map((day, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
-                {day[0]?.dateOfCompletion}
+                {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
               {day.map((assignment, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center mt-4 cursor-pointer"
+                  className="flex items-center mt-4"
                   onClick={() => handleAssignmentClick(assignment)}
                 >
                   <div className="card shadow-lg bg-slate-500 flex-1">
