@@ -1,7 +1,7 @@
 import React from "react";
 import Step1 from "../components/Step1";
 import Stepper from "../components/Stepper";
-
+import Step3 from "../components/Step3";
 import Step2 from "../components/Step2";
 const Tutorial = ({
   step,
@@ -28,6 +28,7 @@ const Tutorial = ({
             savedVal={savedVal}
           ></Step2>
         )}
+        {step == 3 && <Step3></Step3>}
       </div>
     </div>
   );
