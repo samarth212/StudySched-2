@@ -8,8 +8,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import PrintIcon from "@mui/icons-material/Print";
 import ShareIcon from "@mui/icons-material/Share";
 import DateCalendarValue from "../components/Calendar";
-import { TextField } from "@mui/material";
 
+import Todo from "../components/Todo";
 import Schedule from "../components/Schedule.jsx";
 
 const actions = [
@@ -59,18 +59,7 @@ const Dashboard = () => {
 
               <PieActiveArc></PieActiveArc>
             </div>
-            <div className="bg-white shadow-lg p-4 rounded-lg h-5/6 mb-8 w-5/12">
-              <h2 className="text-2xl font-bold text-center  ">To-Do List</h2>
-              <p className="text-center">Add custom notes to Your To-Do LIst</p>
-              <br />
-              <TextField
-                id="outlined-multiline-static"
-                label="To-Do's"
-                multiline
-                rows={7}
-              />
-              <button className="btn btn-block btn-primary mt-4">Save</button>
-            </div>
+            <Todo></Todo>
           </div>
         </div>
         <Schedule />

@@ -71,5 +71,6 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     assignments: newAssignments,
     events: newEvents,
     hoursPerDay: 4,
+    todo: "",
   });
 }
