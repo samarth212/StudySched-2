@@ -11,9 +11,9 @@ const Step3 = () => {
   };
   const handleSubmit = () => {
     const db = getDatabase(app);
-    console.log(localStorage.getItem("uid"));
+
     update(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
-      hoursPerDay: val,
+      hoursPerDay: Number(val),
     });
     window.location.reload();
   };

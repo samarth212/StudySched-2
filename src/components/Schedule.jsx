@@ -142,11 +142,12 @@ const Schedule = () => {
 
           if (timeLeft > tempAvailableHours) {
             assignment.hoursWorked += tempAvailableHours;
+            console.log(assignment.hoursWorked);
             var d = new Date();
             d.setDate(d.getDate() + i);
             scheduler[i].push({
               assignment,
-              hoursAllocated: tempAvailableHours,
+              hoursWorked: tempAvailableHours,
               name: assignment.name,
               totalNeeded: assignment.hoursRequired,
               dateOfCompletion: d.toISOString().split("T")[0],
@@ -159,7 +160,7 @@ const Schedule = () => {
             assignment.hoursWorked = 0;
             scheduler[i].push({
               assignment,
-              hoursAllocated: timeLeft,
+              hoursWorked: timeLeft,
               name: assignment.name,
               totalNeeded: assignment.hoursRequired,
               dateOfCompletion: d.toISOString().split("T")[0],
@@ -174,7 +175,7 @@ const Schedule = () => {
             assignment.hoursWorked = 0;
             scheduler[i].push({
               assignment,
-              hoursAllocated: timeLeft,
+              hoursWorked: timeLeft,
               name: assignment.name,
               totalNeeded: assignment.hoursRequired,
 
@@ -210,7 +211,6 @@ const Schedule = () => {
     fetchData();
   }, []);
   useEffect(() => {
-    console.log(availableHours);
     const allocatedSchedule = sortAssignments(assignments);
     console.log(allocatedSchedule);
     setFinalSchedule(allocatedSchedule);
@@ -221,23 +221,30 @@ const Schedule = () => {
   };
 
   function formatDate(dateString) {
-
-    if (!dateString){
-      return null
+    if (!dateString) {
+      return null;
     }
     const date = new Date(dateString);
-  
-    const options = { weekday: 'long' };
-    const dayOfWeek = new Intl.DateTimeFormat('en-US', options).format(date);
-  
-    const monthOptions = { month: 'long' };
-    const month = new Intl.DateTimeFormat('en-US', monthOptions).format(date);
-  
+
+    const options = { weekday: "long" };
+    const dayOfWeek = new Intl.DateTimeFormat("en-US", options).format(date);
+
+    const monthOptions = { month: "long" };
+    const month = new Intl.DateTimeFormat("en-US", monthOptions).format(date);
+
     const day = date.getDate();
-    const dayWithOrdinal = day + (day % 10 === 1 && day !== 11 ? "st" : day % 10 === 2 && day !== 12 ? "nd" : day % 10 === 3 && day !== 13 ? "rd" : "th");
-  
+    const dayWithOrdinal =
+      day +
+      (day % 10 === 1 && day !== 11
+        ? "st"
+        : day % 10 === 2 && day !== 12
+        ? "nd"
+        : day % 10 === 3 && day !== 13
+        ? "rd"
+        : "th");
+
     const year = date.getFullYear();
-  
+
     return `${dayOfWeek}, ${month} ${dayWithOrdinal}, ${year}`;
   }
 
@@ -266,7 +273,7 @@ const Schedule = () => {
                           ? assignment.name
                           : assignment.name.substring(0, 22).concat("...")}
                         <div className="badge badge-secondary text-white ml-2 w-22">
-                          {assignment.hoursAllocated} Hours
+                          {assignment.hoursWorked} Hours
                         </div>
                       </h2>
                       <div className="card-actions justify-end">
