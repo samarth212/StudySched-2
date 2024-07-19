@@ -1,3 +1,4 @@
+
 import "./schedule.css";
 import { useState, useEffect, useRef } from "react";
 import { getDatabase, ref, get, update, set } from "firebase/database";
@@ -118,6 +119,18 @@ const Schedule = () => {
       setAssignments(tempAssignments);
       setNewHours(tempAssignments);
       console.log(tempAssignments);
+    };
+
+    const updateHoursSupposedtoWork = (assignment) =>{
+      let tempAssignments = [...assignments];
+      for (let i = 0; i < tempAssignments.length; i++) {
+        if (tempAssignments[i].description === assignment.assignment.description) {
+          tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork
+          break;
+        }
+      }
+      setAssignments(tempAssignments);
+      console.log(tempAssignments)
     };
 
   return (

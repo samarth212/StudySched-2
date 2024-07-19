@@ -23,8 +23,8 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
       for (let j = 0; j < tempArray.length; j++) {
         let assignment = tempArray[j];
         
-        if (assignment.hoursWorked == assignment.hoursSupposedtoWork){
-          console.log("save")
+        if (assignment.hoursWorked == assignment.hoursSupposedtoWork && assignment.hoursWorked != 0){
+          console.log("YUHHHHHH")
         };
 
         let timeLeft =
@@ -33,6 +33,10 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
 
         if (timeLeft > tempAvailableHours) {
           assignment.hoursSupposedtoWork += tempAvailableHours;
+          console.log('HOURS SUPPOSED TO WORK:', tempAvailableHours, assignment.hoursWorked)
+          if(tempAvailableHours === assignment.hoursWorked){
+            console.log('finihsed for the day')
+          };
 
           var d = new Date();
           d.setDate(d.getDate() + i);
@@ -47,6 +51,10 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
           tempAvailableHours = 0;
           break;
         } else if (timeLeft == tempAvailableHours) {
+          console.log('HOURS SUPPOSED TO WORK:', timeLeft, assignment.hoursWorked)
+          if(timeLeft === assignment.hoursWorked){
+            console.log('finihsed for the day')
+          };
           var d = new Date();
           d.setDate(d.getDate() + i);
           assignment.hoursSupposedtoWork = 0;
@@ -63,6 +71,10 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
           j--;
           break;
         } else {
+          console.log('HOURS SUPPOSED TO WORK:', timeLeft, assignment.hoursWorked)
+          if(timeLeft === assignment.hoursWorked){
+            console.log('finihsed for the day')
+          };
           var d = new Date();
           d.setDate(d.getDate() + i);
           assignment.hoursSupposedtoWork = 0;
