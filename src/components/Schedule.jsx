@@ -1,6 +1,6 @@
 import "./schedule.css";
 import { useState, useEffect, useRef } from "react";
-import { getDatabase, ref, get, update } from "firebase/database";
+import { getDatabase, ref, get, update, onValue } from "firebase/database";
 import { app } from "../auth/firebase";
 import Modal from "./Modal";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
@@ -16,7 +16,30 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState([]);
   const [hoursWorked, setHoursWorked] = useState([]);
 
-  
+  const [schedulerData, setSchedulerData] = useState([]);
+ 
+  useEffect(() => {
+    const db = getDatabase(app);
+    const dbRef = ref(db, "users/" + localStorage.getItem("uid") + "/activities/scheduler");
+
+    const handleDataChange = (snapshot) => {
+      if (snapshot.exists()) {
+        setSchedulerData(snapshot.val());
+      } else {
+        console.log("No scheduler data available");
+      }
+    };
+
+    // Set up the real-time listener
+    const unsubscribe = onValue(dbRef, handleDataChange, {
+      onlyOnce: false // Keep listening to changes
+    });
+
+    // Cleanup function to remove listener when component unmounts
+    return () => {
+      unsubscribe();
+    };
+  }, []);
   
 
   var scheduler = [];
@@ -26,9 +49,9 @@ const Schedule = () => {
     setHoursWorked(finalSchedule.map(day => new Array(day.length).fill(0)));
   }, [finalSchedule]);
 
-  console.log(hoursWorked, finalSchedule)
+  console.log(hoursWorked)
 
-
+  console.log('HIAIOHIDWQHIDHH', schedulerData)
 
 
   const sortAssignments = (unsortedAssignments) => {
@@ -36,7 +59,7 @@ const Schedule = () => {
     const tempArray = [...unsortedAssignments];
 
     
-
+    
 
     tempArray.sort((a, b) => {
       const dateA = new Date(a.dueDate);
