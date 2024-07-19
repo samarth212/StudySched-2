@@ -18,7 +18,7 @@ const Step2 = ({ setStep, assignments, step, setAssignments }) => {
       },
     });
     const db = getDatabase(app);
-    console.log(localStorage.getItem("uid"));
+
     update(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
       assignments,
     });

@@ -40,7 +40,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     ) {
       newAssignments.push({
         name: event.summary,
-        desciption: event.description,
+        description: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
         hoursRequired: 5,
@@ -54,7 +54,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     ) {
       newEvents.push({
         name: event.summary,
-        desciption: event.description,
+        description: event.description,
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
         hoursRequired: 5,
