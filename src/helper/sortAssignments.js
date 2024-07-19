@@ -22,6 +22,10 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
     while (tempAvailableHours > 0 && tempArray.length > 0) {
       for (let j = 0; j < tempArray.length; j++) {
         let assignment = tempArray[j];
+        
+        if (assignment.hoursWorked == assignment.hoursSupposedtoWork){
+          console.log("save")
+        };
 
         let timeLeft =
           assignment.hoursRequired - assignment.hoursSupposedtoWork;
