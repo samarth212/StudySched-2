@@ -24,7 +24,7 @@ export default function sortAssignments(unsortedAssignments, availableHours) {
         let assignment = tempArray[j];
         
         if (assignment.hoursWorked == assignment.hoursSupposedtoWork && assignment.hoursWorked != 0){
-          console.log("YUHHHHHH")
+          console.log("hello")
         };
 
         let timeLeft =
