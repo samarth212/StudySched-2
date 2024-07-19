@@ -1,4 +1,3 @@
-
 import "./schedule.css";
 import { useState, useEffect, useRef } from "react";
 import { getDatabase, ref, get, update, set } from "firebase/database";
@@ -12,7 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import sortAssignments from "../helper/sortAssignments";
 import formatDate from "../helper/formatDate";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 import { unstable_useViewTransitionState } from "react-router-dom";
 const Schedule = () => {
@@ -80,13 +79,14 @@ const Schedule = () => {
 
   const [tempHours, setTempHours] = useState({});
 
-
-
   const handleHoursWorkedChange = (value, assignment) => {
-    setTempHours((prev) => ({ ...prev, [assignment.assignment.description]: value }));
+    setTempHours((prev) => ({
+      ...prev,
+      [assignment.assignment.description]: value,
+    }));
   };
 
-/*
+  /*
     let objIndex = -1;
     let tempAssignments = [...assignments];
     for (let i = 0; i < tempAssignments.length; i++) {
@@ -103,35 +103,37 @@ const Schedule = () => {
     console.log(tempAssignments);
  */
 
-    const handleHoursSave = (assignment) => {
-      const value = tempHours[assignment.assignment.description];
-      let objIndex = -1;
-      let tempAssignments = [...assignments];
-      for (let i = 0; i < tempAssignments.length; i++) {
-        if (
-          tempAssignments[i].description === assignment.assignment.description
-        ) {
-          objIndex = i;
-          break;
-        }
+  const handleHoursSave = (assignment) => {
+    const value = tempHours[assignment.assignment.description];
+    let objIndex = -1;
+    let tempAssignments = [...assignments];
+    for (let i = 0; i < tempAssignments.length; i++) {
+      if (
+        tempAssignments[i].description === assignment.assignment.description
+      ) {
+        objIndex = i;
+        break;
       }
-      tempAssignments[objIndex].hoursWorked = Number(value);
-      setAssignments(tempAssignments);
-      setNewHours(tempAssignments);
-      console.log(tempAssignments);
-    };
+    }
+    tempAssignments[objIndex].hoursWorked = Number(value);
+    setAssignments(tempAssignments);
+    setNewHours(tempAssignments);
+    console.log(tempAssignments);
+  };
 
-    const updateHoursSupposedtoWork = (assignment) =>{
-      let tempAssignments = [...assignments];
-      for (let i = 0; i < tempAssignments.length; i++) {
-        if (tempAssignments[i].description === assignment.assignment.description) {
-          tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork
-          break;
-        }
+  const updateHoursSupposedtoWork = (assignment) => {
+    let tempAssignments = [...assignments];
+    for (let i = 0; i < tempAssignments.length; i++) {
+      if (
+        tempAssignments[i].description === assignment.assignment.description
+      ) {
+        tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork;
+        break;
       }
-      setAssignments(tempAssignments);
-      console.log(tempAssignments)
-    };
+    }
+    setAssignments(tempAssignments);
+    console.log(tempAssignments);
+  };
 
   return (
     <>
@@ -148,7 +150,6 @@ const Schedule = () => {
               </p>
               {day.map((assignment, idx) => (
                 <div
-                
                   key={idx}
                   className={
                     assignment.assignment.hoursRequired -
@@ -185,7 +186,7 @@ const Schedule = () => {
                             id="demo-simple-select"
                             label="Hours Worked"
                             type="number"
-                            sx={{width:"120px"}}
+                            sx={{ width: "120px" }}
                             defaultValue={""}
                             onChange={(e) =>
                               handleHoursWorkedChange(
@@ -193,15 +194,24 @@ const Schedule = () => {
                                 assignment
                               )
                             }
-                            
                           >
-                            {[...Array(5).keys()]
-                              .map((i) => i + 1)
+                            {[
+                              ...Array(
+                                assignment.assignment.hoursRequired + 1
+                              ).keys(),
+                            ]
+                              .map((i) => i)
                               .map((hour) => (
                                 <MenuItem value={hour}>{hour}</MenuItem>
                               ))}
                           </Select>
-                          <Button variant="contained" sx={{width:"40px"}} onClick={() => handleHoursSave(assignment)}>Save</Button>
+                          <Button
+                            variant="contained"
+                            sx={{ width: "40px" }}
+                            onClick={() => handleHoursSave(assignment)}
+                          >
+                            Save
+                          </Button>
                         </FormControl>
                       </h2>
                       <div className="card-actions justify-end">
