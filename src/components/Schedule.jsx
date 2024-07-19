@@ -109,10 +109,24 @@ const Schedule = () => {
               {day.map((assignment, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center mt-4"
+                  className={
+                    assignment.assignment.hoursRequired -
+                      assignment.assignment.hoursWorked <
+                    1
+                      ? "flex items-center mt-4 opacity-50"
+                      : "flex items-center mt-"
+                  }
                   // onClick={() => handleAssignmentClick(assignment)}
                 >
-                  <div className="card shadow-lg bg-slate-500 flex-1">
+                  <div
+                    className={
+                      assignment.assignment.hoursRequired -
+                        assignment.assignment.hoursWorked <
+                      1
+                        ? "card shadow-lg bg-green-600 flex-1"
+                        : "card shadow-lg bg-slate-500 flex-1"
+                    }
+                  >
                     <div className="card-body">
                       <h2 className="card-title text-white">
                         {assignment.name.length < 29
