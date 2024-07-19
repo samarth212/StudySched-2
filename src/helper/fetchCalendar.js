@@ -44,6 +44,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
         hoursRequired: 5,
+        hoursSupposedtoWork: 0,
         hoursWorked: 0,
       });
     }
@@ -57,6 +58,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
         startDate: event.startDate.toString().split("T")[0],
         dueDate: event.endDate.toString().split("T")[0],
         hoursRequired: 5,
+        hoursSupposedtoWork: 0,
         hoursWorked: 0,
       });
     }
