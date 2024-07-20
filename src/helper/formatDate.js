@@ -4,13 +4,14 @@ export default function formatDate(dateString) {
   }
   const date = new Date(dateString);
 
-  const options = { weekday: "long" };
-  const dayOfWeek = new Intl.DateTimeFormat("en-US", options).format(date);
+  // Ensure that the date is interpreted correctly
+  const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
 
-  const monthOptions = { month: "long" };
-  const month = new Intl.DateTimeFormat("en-US", monthOptions).format(date);
+  const options = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(localDate);
 
-  const day = date.getDate();
+  // Extract day to add ordinal
+  const day = localDate.getDate();
   const dayWithOrdinal =
     day +
     (day % 10 === 1 && day !== 11
@@ -21,7 +22,5 @@ export default function formatDate(dateString) {
       ? "rd"
       : "th");
 
-  const year = date.getFullYear();
-
-  return `${dayOfWeek}, ${month} ${dayWithOrdinal}, ${year}`;
+  return formattedDate.replace(day, dayWithOrdinal);
 }

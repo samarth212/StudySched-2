@@ -33,24 +33,29 @@ const Schedule = () => {
       const snapshot = await get(dbRef);
 
       if (snapshot.exists()) {
-        console.log("fetching data");
+    
         setAvailableHours(snapshot.val().hoursPerDay);
         setAssignments(snapshot.val().assignments);
       } else {
-        console.log("No data available");
+ 
       }
     };
+ 
 
-    fetchData();
-  }, [resetAssignments]);
+      fetchData();
+    
+
+  }, []);
 
   useEffect(() => {
-    console.log("resorting");
+  
     if (assignments) {
+   
       const allocatedSchedule = sortAssignments(assignments, availableHours);
       setFinalSchedule(allocatedSchedule);
+    
     }
-  }, [assignments]);
+  }, [availableHours]);
 
   useEffect(() => {
     const updateHours = async () => {
@@ -65,13 +70,13 @@ const Schedule = () => {
             assignments,
           }
         );
-        setResetAssignments(!resetAssignments);
+        setResetAssignments(true);
       }
     };
     updateHours();
   }, [newHours]);
 
-  //good
+
   const handleAssignmentClick = (assignment) => {
     setSelectedAssignment(assignment.assignment);
     setShowModal(true);
@@ -86,22 +91,6 @@ const Schedule = () => {
     }));
   };
 
-  /*
-    let objIndex = -1;
-    let tempAssignments = [...assignments];
-    for (let i = 0; i < tempAssignments.length; i++) {
-      if (
-        tempAssignments[i].description === assignment.assignment.description
-      ) {
-        objIndex = i;
-        break;
-      }
-    }
-    tempAssignments[objIndex].hoursWorked = Number(value);
-    setAssignments(tempAssignments);
-    setNewHours(tempAssignments);
-    console.log(tempAssignments);
- */
 
   const handleHoursSave = (assignment) => {
     const value = tempHours[assignment.assignment.description];
@@ -118,7 +107,7 @@ const Schedule = () => {
     tempAssignments[objIndex].hoursWorked = Number(value);
     setAssignments(tempAssignments);
     setNewHours(tempAssignments);
-    console.log(tempAssignments);
+  
   };
 
   const updateHoursSupposedtoWork = (assignment) => {
@@ -146,6 +135,8 @@ const Schedule = () => {
           {finalSchedule.map((day, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
+    
+
                 {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
               {day.map((assignment, idx) => (
@@ -202,7 +193,7 @@ const Schedule = () => {
                             ]
                               .map((i) => i)
                               .map((hour) => (
-                                <MenuItem value={hour}>{hour}</MenuItem>
+                                <MenuItem key={ Math.random()}value={hour}>{hour} </MenuItem>
                               ))}
                           </Select>
                           <Button
