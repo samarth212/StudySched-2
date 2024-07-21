@@ -1,4 +1,8 @@
-export default function sortAssignments(unsortedAssignments, availableHours, startDate=new Date()){
+export default function sortAssignments(
+  unsortedAssignments,
+  availableHours,
+  startDate = new Date()
+) {
   const tempArray = [...unsortedAssignments];
 
   tempArray.sort((a, b) => {
@@ -11,42 +15,43 @@ export default function sortAssignments(unsortedAssignments, availableHours, sta
     return 0;
   });
 
-console.log(startDate)
+  console.log(startDate);
 
-console.log(Date())
   const endDate = new Date("6/07/25");
   const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
 
   let scheduler = Array.from({ length: Math.floor(days) }, () => []);
 
   for (let i = 0; i < days; i++) {
+    console.log(startDate);
     let tempAvailableHours = availableHours;
     while (tempAvailableHours > 0 && tempArray.length > 0) {
       for (let j = 0; j < tempArray.length; j++) {
         let assignment = tempArray[j];
-        
-        if (assignment.hoursWorked == assignment.hoursSupposedtoWork && assignment.hoursWorked != 0){
-          console.log("hello")
-        };
+
+        if (
+          assignment.hoursWorked == assignment.hoursSupposedtoWork &&
+          assignment.hoursWorked != 0
+        ) {
+        }
 
         let timeLeft =
           assignment.hoursRequired - assignment.hoursSupposedtoWork;
         timeLeft -= assignment.hoursWorked;
 
-        let finishedToday = false
+        let finishedToday = false;
 
         if (timeLeft > tempAvailableHours) {
           assignment.hoursSupposedtoWork += tempAvailableHours;
-          console.log('HOURS SUPPOSED TO WORK:', tempAvailableHours, assignment.hoursWorked)
-          if(tempAvailableHours === assignment.hoursWorked){
-            console.log('finihsed for the day')
-            finishedToday = true
-          };
 
-          var d = new Date();
-        
+          if (tempAvailableHours === assignment.hoursWorked) {
+            finishedToday = true;
+          }
+
+          var d = new Date(startDate.getTime());
+
           d.setDate(d.getDate() + i);
-            console.log(d.toISOString().split("T")[0])
+          console.log(d.toISOString().split("T")[0]);
           scheduler[i].push({
             assignment,
             hoursSupposedtoWork: tempAvailableHours,
@@ -54,20 +59,18 @@ console.log(Date())
             totalNeeded: assignment.hoursRequired,
             dateOfCompletion: d.toISOString().split("T")[0],
             hoursWorked: assignment.hoursWorked,
-            finishedToday: finishedToday
+            finishedToday: finishedToday,
           });
-          console.log(scheduler[i])
+
           tempAvailableHours = 0;
           break;
         } else if (timeLeft == tempAvailableHours) {
-  
-          if(timeLeft === assignment.hoursWorked){
-            console.log('finihsed for the day')
-            finishedToday = true
-
-          };
-          var d = new Date();
+          if (timeLeft === assignment.hoursWorked) {
+            finishedToday = true;
+          }
+          var d = new Date(startDate.getTime());
           d.setDate(d.getDate() + i);
+          console.log(d.toISOString().split("T")[0]);
           assignment.hoursSupposedtoWork = 0;
           scheduler[i].push({
             assignment,
@@ -76,21 +79,20 @@ console.log(Date())
             totalNeeded: assignment.hoursRequired,
             dateOfCompletion: d.toISOString().split("T")[0],
             hoursWorked: assignment.hoursWorked,
-            finishedToday: finishedToday
+            finishedToday: finishedToday,
           });
           tempAvailableHours -= timeLeft;
           tempArray.splice(j, 1);
           j--;
           break;
         } else {
-          console.log('HOURS SUPPOSED TO WORK:', timeLeft, assignment.hoursWorked)
-          if(timeLeft === assignment.hoursWorked){
-            console.log('finihsed for the day')
-            finishedToday = true
+          if (timeLeft === assignment.hoursWorked) {
+            finishedToday = true;
+          }
+          var d = new Date(startDate.getTime());
 
-          };
-          var d = new Date();
           d.setDate(d.getDate() + i);
+
           assignment.hoursSupposedtoWork = 0;
           scheduler[i].push({
             assignment,
@@ -99,7 +101,7 @@ console.log(Date())
             totalNeeded: assignment.hoursRequired,
             dateOfCompletion: d.toISOString().split("T")[0],
             hoursWorked: assignment.hoursWorked,
-            finishedToday: finishedToday
+            finishedToday: finishedToday,
           });
           tempAvailableHours -= timeLeft;
           tempArray.splice(j, 1);

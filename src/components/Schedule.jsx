@@ -22,6 +22,7 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState(false);
   const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
+  const [previousAssignments, setPreviousAssignments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,29 +34,21 @@ const Schedule = () => {
       const snapshot = await get(dbRef);
 
       if (snapshot.exists()) {
-    
         setAvailableHours(snapshot.val().hoursPerDay);
         setAssignments(snapshot.val().assignments);
       } else {
- 
       }
     };
- 
 
-      fetchData();
-    
-
+    fetchData();
   }, []);
 
   useEffect(() => {
-  
     if (assignments) {
-   
       const allocatedSchedule = sortAssignments(assignments, availableHours);
       setFinalSchedule(allocatedSchedule);
-    
     }
-  }, [availableHours]);
+  }, [assignments]);
 
   useEffect(() => {
     const updateHours = async () => {
@@ -70,12 +63,19 @@ const Schedule = () => {
             assignments,
           }
         );
-        setResetAssignments(true);
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        var allocatedSchedule = sortAssignments(
+          assignments,
+          availableHours,
+          tomorrow
+        );
+
+        setFinalSchedule(allocatedSchedule);
       }
     };
     updateHours();
   }, [newHours]);
-
 
   const handleAssignmentClick = (assignment) => {
     setSelectedAssignment(assignment.assignment);
@@ -90,7 +90,6 @@ const Schedule = () => {
       [assignment.assignment.description]: value,
     }));
   };
-
 
   const handleHoursSave = (assignment) => {
     const value = tempHours[assignment.assignment.description];
@@ -107,21 +106,7 @@ const Schedule = () => {
     tempAssignments[objIndex].hoursWorked = Number(value);
     setAssignments(tempAssignments);
     setNewHours(tempAssignments);
-  
-  };
-
-  const updateHoursSupposedtoWork = (assignment) => {
-    let tempAssignments = [...assignments];
-    for (let i = 0; i < tempAssignments.length; i++) {
-      if (
-        tempAssignments[i].description === assignment.assignment.description
-      ) {
-        tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork;
-        break;
-      }
-    }
-    setAssignments(tempAssignments);
-    console.log(tempAssignments);
+    setPreviousAssignments((prev) => [...prev, assignment]);
   };
 
   return (
@@ -130,13 +115,75 @@ const Schedule = () => {
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
         {/* <button onClick={sortAssignments(assignments)}>test</button> */}
-
+        {console.log(previousAssignments)}
+        {console.log(finalSchedule)}
+        {previousAssignments.map((assignment, idx) => (
+          <div
+            key={idx}
+            className="flex items-center mt-4 opacity-50"
+            //onClick={() => handleAssignmentClick(assignment)}
+          >
+            <div className="card shadow-lg bg-green-600 flex-1">
+              <div className="card-body">
+                <h2 className="card-title text-white">
+                  {assignment.name.length < 29
+                    ? assignment.name
+                    : assignment.name.substring(0, 22).concat("...")}
+                  <div className="badge badge-secondary text-white ml-2 w-22">
+                    {assignment.hoursSupposedtoWork} Hours
+                  </div>
+                  <FormControl fullWidth variant="filled">
+                    <InputLabel id="demo-simple-select-label">
+                      Hours Worked
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Hours Worked"
+                      type="number"
+                      sx={{ width: "120px" }}
+                      defaultValue={""}
+                      onChange={(e) =>
+                        handleHoursWorkedChange(e.target.value, assignment)
+                      }
+                    >
+                      {[
+                        ...Array(
+                          assignment.assignment.hoursRequired + 1
+                        ).keys(),
+                      ]
+                        .map((i) => i)
+                        .map((hour) => (
+                          <MenuItem key={Math.random()} value={hour}>
+                            {hour}{" "}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                    <Button
+                      variant="contained"
+                      sx={{ width: "40px" }}
+                      onClick={() => handleHoursSave(assignment)}
+                    >
+                      Save
+                    </Button>
+                  </FormControl>
+                </h2>
+                <div className="card-actions justify-end">
+                  <div className="badge badge-outline text-white">
+                    Due: {assignment.assignment.dueDate}
+                  </div>
+                  <div className="badge badge-outline text-white">
+                    Assignment
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
         <div className="flex flex-col overflow-y-auto">
           {finalSchedule.map((day, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
-    
-
                 {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
               {day.map((assignment, idx) => (
@@ -193,7 +240,9 @@ const Schedule = () => {
                             ]
                               .map((i) => i)
                               .map((hour) => (
-                                <MenuItem key={ Math.random()}value={hour}>{hour} </MenuItem>
+                                <MenuItem key={Math.random()} value={hour}>
+                                  {hour}{" "}
+                                </MenuItem>
                               ))}
                           </Select>
                           <Button
