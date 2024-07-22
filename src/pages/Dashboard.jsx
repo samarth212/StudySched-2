@@ -11,7 +11,6 @@ import DateCalendarValue from "../components/Calendar";
 
 import Todo from "../components/Todo";
 import Schedule from "../components/Schedule.jsx";
-import Test from "../components/Test.jsx";
 
 const actions = [
   { icon: <FileCopyIcon />, name: "Copy" },
@@ -63,7 +62,7 @@ const Dashboard = () => {
             <Todo></Todo>
           </div>
         </div>
-        <Test />
+        <Schedule />
       </div>
     </div>
   );

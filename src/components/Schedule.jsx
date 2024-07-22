@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import sortAssignments from "../helper/sortAssignments";
+import updateAssignment from "../helper/updateAssignment";
 import formatDate from "../helper/formatDate";
 import Button from "@mui/material/Button";
 
@@ -22,7 +23,6 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState(false);
   const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
-  const [previousAssignments, setPreviousAssignments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,27 +34,38 @@ const Schedule = () => {
       const snapshot = await get(dbRef);
 
       if (snapshot.exists()) {
+    
         setAvailableHours(snapshot.val().hoursPerDay);
         setAssignments(snapshot.val().assignments);
       } else {
+ 
       }
     };
+ 
 
-    fetchData();
+      fetchData();
+    
+
   }, []);
 
+  const [sort, setSort] = useState(true);
   useEffect(() => {
-    if (assignments) {
+  
+    if (assignments && sort) {
+   
       const allocatedSchedule = sortAssignments(assignments, availableHours);
       setFinalSchedule(allocatedSchedule);
+      setSort(false)
+
+    
     }
-  }, [assignments]);
+  }, [availableHours]);
 
   useEffect(() => {
     const updateHours = async () => {
-      console.log(assignments);
+      //console.log(assignments);
       if (assignments) {
-        console.log(assignments);
+        //console.log(assignments);
         const db = getDatabase(app);
 
         await update(
@@ -63,19 +74,12 @@ const Schedule = () => {
             assignments,
           }
         );
-        let tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        var allocatedSchedule = sortAssignments(
-          assignments,
-          availableHours,
-          tomorrow
-        );
-
-        setFinalSchedule(allocatedSchedule);
+        setResetAssignments(true);
       }
     };
     updateHours();
   }, [newHours]);
+
 
   const handleAssignmentClick = (assignment) => {
     setSelectedAssignment(assignment.assignment);
@@ -91,7 +95,23 @@ const Schedule = () => {
     }));
   };
 
-  const handleHoursSave = (assignment) => {
+
+  const handleHoursSave = (assignment, arrayIndex, dayIndex) => {
+
+    const value = tempHours[assignment.assignment.description];
+    console.log(value)
+    const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value)
+    
+    setFinalSchedule(newSchedule);
+    console.log(finalSchedule)
+    setTempHours((prev) => ({
+        ...prev,
+        [assignment.assignment.description]: value,
+    }));
+    
+    
+
+    /*
     const value = tempHours[assignment.assignment.description];
     let objIndex = -1;
     let tempAssignments = [...assignments];
@@ -106,84 +126,41 @@ const Schedule = () => {
     tempAssignments[objIndex].hoursWorked = Number(value);
     setAssignments(tempAssignments);
     setNewHours(tempAssignments);
-    setPreviousAssignments((prev) => [...prev, assignment]);
+    */
+
   };
+
+  const updateHoursSupposedtoWork = (assignment) => {
+    let tempAssignments = [...assignments];
+    for (let i = 0; i < tempAssignments.length; i++) {
+      if (
+        tempAssignments[i].description === assignment.assignment.description
+      ) {
+        tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork;
+        break;
+      }
+    }
+    setAssignments(tempAssignments);
+    //console.log(tempAssignments);
+  };
+
+  const handleTest = () =>{
+    updateAssignment(finalSchedule)
+  }
 
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-        {/* <button onClick={sortAssignments(assignments)}>test</button> */}
-        {console.log(previousAssignments)}
-        {console.log(finalSchedule)}
-        {previousAssignments.map((assignment, idx) => (
-          <div
-            key={idx}
-            className="flex items-center mt-4 opacity-50"
-            //onClick={() => handleAssignmentClick(assignment)}
-          >
-            <div className="card shadow-lg bg-green-600 flex-1">
-              <div className="card-body">
-                <h2 className="card-title text-white">
-                  {assignment.name.length < 29
-                    ? assignment.name
-                    : assignment.name.substring(0, 22).concat("...")}
-                  <div className="badge badge-secondary text-white ml-2 w-22">
-                    {assignment.hoursSupposedtoWork} Hours
-                  </div>
-                  <FormControl fullWidth variant="filled">
-                    <InputLabel id="demo-simple-select-label">
-                      Hours Worked
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Hours Worked"
-                      type="number"
-                      sx={{ width: "120px" }}
-                      defaultValue={""}
-                      onChange={(e) =>
-                        handleHoursWorkedChange(e.target.value, assignment)
-                      }
-                    >
-                      {[
-                        ...Array(
-                          assignment.assignment.hoursRequired + 1
-                        ).keys(),
-                      ]
-                        .map((i) => i)
-                        .map((hour) => (
-                          <MenuItem key={Math.random()} value={hour}>
-                            {hour}{" "}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                    <Button
-                      variant="contained"
-                      sx={{ width: "40px" }}
-                      onClick={() => handleHoursSave(assignment)}
-                    >
-                      Save
-                    </Button>
-                  </FormControl>
-                </h2>
-                <div className="card-actions justify-end">
-                  <div className="badge badge-outline text-white">
-                    Due: {assignment.assignment.dueDate}
-                  </div>
-                  <div className="badge badge-outline text-white">
-                    Assignment
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+        <button onClick={handleTest}>test</button>
         <div className="flex flex-col overflow-y-auto">
+           
           {finalSchedule.map((day, index) => (
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
+    
+
                 {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
               {day.map((assignment, idx) => (
@@ -200,9 +177,7 @@ const Schedule = () => {
                 >
                   <div
                     className={
-                      assignment.assignment.hoursRequired -
-                        assignment.assignment.hoursWorked <
-                      1
+                      assignment.hoursWorked >= assignment.hoursSupposedtoWork
                         ? "card shadow-lg bg-green-600 flex-1"
                         : "card shadow-lg bg-slate-500 flex-1"
                     }
@@ -240,15 +215,13 @@ const Schedule = () => {
                             ]
                               .map((i) => i)
                               .map((hour) => (
-                                <MenuItem key={Math.random()} value={hour}>
-                                  {hour}{" "}
-                                </MenuItem>
+                                <MenuItem key={ Math.random()}value={hour}>{hour} </MenuItem>
                               ))}
                           </Select>
                           <Button
                             variant="contained"
                             sx={{ width: "40px" }}
-                            onClick={() => handleHoursSave(assignment)}
+                            onClick={() => handleHoursSave(assignment, index, idx)}
                           >
                             Save
                           </Button>
