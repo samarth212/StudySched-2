@@ -15,7 +15,7 @@ export default function sortAssignments(
     return 0;
   });
 
-  console.log(startDate);
+  //console.log(startDate);
 
   const endDate = new Date("6/07/25");
   const days = (endDate - startDate) / (1000 * 60 * 60 * 24);
@@ -23,7 +23,7 @@ export default function sortAssignments(
   let scheduler = Array.from({ length: Math.floor(days) }, () => []);
 
   for (let i = 0; i < days; i++) {
-    console.log(startDate);
+    //console.log(startDate);
     let tempAvailableHours = availableHours;
     while (tempAvailableHours > 0 && tempArray.length > 0) {
       for (let j = 0; j < tempArray.length; j++) {
@@ -51,7 +51,7 @@ export default function sortAssignments(
           var d = new Date(startDate.getTime());
 
           d.setDate(d.getDate() + i);
-          console.log(d.toISOString().split("T")[0]);
+          //console.log(d.toISOString().split("T")[0]);
           scheduler[i].push({
             assignment,
             hoursSupposedtoWork: tempAvailableHours,
@@ -70,7 +70,7 @@ export default function sortAssignments(
           }
           var d = new Date(startDate.getTime());
           d.setDate(d.getDate() + i);
-          console.log(d.toISOString().split("T")[0]);
+          //console.log(d.toISOString().split("T")[0]);
           assignment.hoursSupposedtoWork = 0;
           scheduler[i].push({
             assignment,

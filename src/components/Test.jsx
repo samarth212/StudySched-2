@@ -1,0 +1,254 @@
+import "./schedule.css";
+import { useState, useEffect, useRef } from "react";
+import { getDatabase, ref, get, update, set } from "firebase/database";
+import { app } from "../auth/firebase";
+import Modal from "./Modal";
+import * as React from "react";
+
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import sortAssignments from "../helper/sortAssignments";
+import updateAssignment from "../helper/updateAssignment";
+import formatDate from "../helper/formatDate";
+import Button from "@mui/material/Button";
+
+import { unstable_useViewTransitionState } from "react-router-dom";
+const Test = () => {
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [finalSchedule, setFinalSchedule] = useState([]);
+  const [availableHours, setAvailableHours] = useState(0);
+  const [assignments, setAssignments] = useState(false);
+  const [resetAssignments, setResetAssignments] = useState(false);
+  const [newHours, setNewHours] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const db = getDatabase(app);
+      const dbRef = ref(
+        db,
+        "users/" + localStorage.getItem("uid") + "/activities"
+      );
+      const snapshot = await get(dbRef);
+
+      if (snapshot.exists()) {
+    
+        setAvailableHours(snapshot.val().hoursPerDay);
+        setAssignments(snapshot.val().assignments);
+      } else {
+ 
+      }
+    };
+ 
+
+      fetchData();
+    
+
+  }, []);
+
+  const [sort, setSort] = useState(true);
+  useEffect(() => {
+  
+    if (assignments && sort) {
+   
+      const allocatedSchedule = sortAssignments(assignments, availableHours);
+      setFinalSchedule(allocatedSchedule);
+      setSort(false)
+
+    
+    }
+  }, [availableHours]);
+
+  useEffect(() => {
+    const updateHours = async () => {
+      //console.log(assignments);
+      if (assignments) {
+        //console.log(assignments);
+        const db = getDatabase(app);
+
+        await update(
+          ref(db, "users/" + localStorage.getItem("uid") + "/activities"),
+          {
+            assignments,
+          }
+        );
+        setResetAssignments(true);
+      }
+    };
+    updateHours();
+  }, [newHours]);
+
+
+  const handleAssignmentClick = (assignment) => {
+    setSelectedAssignment(assignment.assignment);
+    setShowModal(true);
+  };
+
+  const [tempHours, setTempHours] = useState({});
+
+  const handleHoursWorkedChange = (value, assignment) => {
+    setTempHours((prev) => ({
+      ...prev,
+      [assignment.assignment.description]: value,
+    }));
+  };
+
+
+  const handleHoursSave = (assignment, arrayIndex, dayIndex) => {
+
+    const value = tempHours[assignment.assignment.description];
+    console.log(value)
+    const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value)
+    
+    setFinalSchedule(newSchedule);
+    console.log(finalSchedule)
+    setTempHours((prev) => ({
+        ...prev,
+        [assignment.assignment.description]: value,
+    }));
+    
+
+    /*
+    const value = tempHours[assignment.assignment.description];
+    let objIndex = -1;
+    let tempAssignments = [...assignments];
+    for (let i = 0; i < tempAssignments.length; i++) {
+      if (
+        tempAssignments[i].description === assignment.assignment.description
+      ) {
+        objIndex = i;
+        break;
+      }
+    }
+    tempAssignments[objIndex].hoursWorked = Number(value);
+    setAssignments(tempAssignments);
+    setNewHours(tempAssignments);
+    */
+
+  };
+
+  const updateHoursSupposedtoWork = (assignment) => {
+    let tempAssignments = [...assignments];
+    for (let i = 0; i < tempAssignments.length; i++) {
+      if (
+        tempAssignments[i].description === assignment.assignment.description
+      ) {
+        tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork;
+        break;
+      }
+    }
+    setAssignments(tempAssignments);
+    //console.log(tempAssignments);
+  };
+
+  const handleTest = () =>{
+    updateAssignment(finalSchedule)
+  }
+
+  return (
+    <>
+      <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
+        <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
+        <p className="text-center">View your study schedule</p>
+        <button onClick={handleTest}>test</button>
+        <div className="flex flex-col overflow-y-auto">
+           
+          {finalSchedule.map((day, index) => (
+            <div key={index} className="flex-col items-center mb-4 mt-12">
+              <p className="text-xl font-semibold">
+    
+
+                {formatDate(day[0]?.dateOfCompletion.toString())}
+              </p>
+              {day.map((assignment, idx) => (
+                <div
+                  key={idx}
+                  className={
+                    assignment.assignment.hoursRequired -
+                      assignment.assignment.hoursWorked <
+                    1
+                      ? "flex items-center mt-4 opacity-50"
+                      : "flex items-center mt-"
+                  }
+                  //onClick={() => handleAssignmentClick(assignment)}
+                >
+                  <div
+                    className={
+                      assignment.hoursWorked >= assignment.hoursSupposedtoWork
+                        ? "card shadow-lg bg-green-600 flex-1"
+                        : "card shadow-lg bg-slate-500 flex-1"
+                    }
+                  >
+                    <div className="card-body">
+                      <h2 className="card-title text-white">
+                        {assignment.name.length < 29
+                          ? assignment.name
+                          : assignment.name.substring(0, 22).concat("...")}
+                        <div className="badge badge-secondary text-white ml-2 w-22">
+                          {assignment.hoursSupposedtoWork} Hours
+                        </div>
+                        <FormControl fullWidth variant="filled">
+                          <InputLabel id="demo-simple-select-label">
+                            Hours Worked
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            label="Hours Worked"
+                            type="number"
+                            sx={{ width: "120px" }}
+                            defaultValue={""}
+                            onChange={(e) =>
+                              handleHoursWorkedChange(
+                                e.target.value,
+                                assignment
+                              )
+                            }
+                          >
+                            {[
+                              ...Array(
+                                assignment.assignment.hoursRequired + 1
+                              ).keys(),
+                            ]
+                              .map((i) => i)
+                              .map((hour) => (
+                                <MenuItem key={ Math.random()}value={hour}>{hour} </MenuItem>
+                              ))}
+                          </Select>
+                          <Button
+                            variant="contained"
+                            sx={{ width: "40px" }}
+                            onClick={() => handleHoursSave(assignment, index, idx)}
+                          >
+                            Save
+                          </Button>
+                        </FormControl>
+                      </h2>
+                      <div className="card-actions justify-end">
+                        <div className="badge badge-outline text-white">
+                          Due: {assignment.assignment.dueDate}
+                        </div>
+                        <div className="badge badge-outline text-white">
+                          Assignment
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        assignment={selectedAssignment}
+      />
+    </>
+  );
+};
+
+export default Test;
