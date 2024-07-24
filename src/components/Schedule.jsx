@@ -100,7 +100,7 @@ const Schedule = () => {
 
     const value = tempHours[assignment.assignment.description];
     console.log(value)
-    const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value)
+    const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value, availableHours)
     
     setFinalSchedule(newSchedule);
     console.log(finalSchedule)
@@ -144,16 +144,12 @@ const Schedule = () => {
     //console.log(tempAssignments);
   };
 
-  const handleTest = () =>{
-    updateAssignment(finalSchedule)
-  }
 
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-        <button onClick={handleTest}>test</button>
         <div className="flex flex-col overflow-y-auto">
            
           {finalSchedule.map((day, index) => (
