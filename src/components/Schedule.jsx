@@ -151,6 +151,7 @@ const Schedule = () => {
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
+        <p style={{color: "red", fontSize:"24px"}}>red = that day is backed up</p>
         <div className="flex flex-col overflow-y-auto">
            
           {finalSchedule.map((day, index) => (
