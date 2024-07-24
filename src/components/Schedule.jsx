@@ -107,6 +107,8 @@ const Schedule = () => {
         ...prev,
         [assignment.assignment.description]: value,
     }));
+
+    assignment.isHoursSaved = true
     
     
 
@@ -184,7 +186,7 @@ const Schedule = () => {
                         <div className="badge badge-secondary text-white ml-2 w-22">
                           {assignment.hoursSupposedtoWork} Hours
                         </div>
-                        <FormControl fullWidth variant="filled">
+                        <FormControl fullWidth variant="filled" sx={{display: assignment.isHoursSaved ? "none": "flex"}}>
                           <InputLabel id="demo-simple-select-label">
                             Hours Worked
                           </InputLabel>
