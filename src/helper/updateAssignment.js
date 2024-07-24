@@ -39,16 +39,34 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
         };
 
 
+        const isBackedUp = reCheckTotalHours(scheduler[arrayIndex+2], dailyStudyTime)
+
+        for(let i=0; i<scheduler[arrayIndex+2].length; i++){
+            scheduler[arrayIndex+2][i].isBackedUp = isBackedUp
+        };
 
 
-        return scheduler;  
+        return scheduler;
     }
 
 
+};
 
 
+//makinf this helper function to check if they are backed up on the day where the new assignment has ben added
+function reCheckTotalHours(nextNextDayAssignments, dailyStudyTime){
 
+    let tempTotalHours = 0;
 
-  
-   
+    for(let i=0; i<nextNextDayAssignments.length; i++){
+        tempTotalHours += nextNextDayAssignments[i].hoursSupposedtoWork;
+    };
+
+    if(tempTotalHours > dailyStudyTime){
+        return true;
+    }
+    else{
+        return false;
+    };
+
 };

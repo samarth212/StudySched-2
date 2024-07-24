@@ -23,7 +23,6 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState(false);
   const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       const db = getDatabase(app);
@@ -163,19 +162,18 @@ const Schedule = () => {
                 <div
                   key={idx}
                   className={
-                    assignment.assignment.hoursRequired -
-                      assignment.assignment.hoursWorked <
-                    1
+                    assignment.hoursWorked >= assignment.hoursSupposedtoWork
                       ? "flex items-center mt-4 opacity-50"
                       : "flex items-center mt-"
                   }
+                  
                   //onClick={() => handleAssignmentClick(assignment)}
                 >
                   <div
                     className={
                       assignment.hoursWorked >= assignment.hoursSupposedtoWork
                         ? "card shadow-lg bg-green-600 flex-1"
-                        : "card shadow-lg bg-slate-500 flex-1"
+                        : (assignment.isBackedUp ? "card shadow-lg bg-red-500 flex-1": "card shadow-lg bg-slate-500 flex-1")
                     }
                   >
                     <div className="card-body">
