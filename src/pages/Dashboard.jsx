@@ -1,39 +1,16 @@
 import React from "react";
 import PieActiveArc from "../components/PieChart";
-import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
-import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import PrintIcon from "@mui/icons-material/Print";
-import ShareIcon from "@mui/icons-material/Share";
-import DateCalendarValue from "../components/Calendar";
 
+import DateCalendarValue from "../components/Calendar";
+import AddAssignment from "../components/AddAssignment";
 import Todo from "../components/Todo";
 import Schedule from "../components/Schedule.jsx";
 
-const actions = [
-  { icon: <FileCopyIcon />, name: "Copy" },
-  { icon: <SaveIcon />, name: "Save" },
-  { icon: <PrintIcon />, name: "Print" },
-  { icon: <ShareIcon />, name: "Share" },
-];
 const Dashboard = () => {
   return (
     <div className="pl-64">
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: "absolute", bottom: 16, right: 16 }}
-        icon={<SpeedDialIcon />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-          />
-        ))}
-      </SpeedDial>
+      {/* Open the modal using document.getElementById('ID').showModal() method */}
+      <AddAssignment></AddAssignment>
       <div className="flex gap-4">
         <div className="bg-white shadow-lg p-4 rounded-lg mb-12 w-1/6">
           <h2 className="text-2xl font-bold text-center  ">Priority</h2>
