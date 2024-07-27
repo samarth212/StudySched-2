@@ -23,11 +23,12 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
     else{
         const hoursToAdd = assignment.hoursSupposedtoWork - hoursCompletedToday;
         assignment.hoursWorked = hoursCompletedToday;
-        nextDayAssignments[dayIndex].hoursSupposedtoWork += hoursToAdd;
+        //nextDayAssignments[dayIndex].hoursSupposedtoWork += hoursToAdd;
         
         for(let i=0; i<nextDayAssignments.length; i++){
             tempTotalHours += nextDayAssignments[i].hoursSupposedtoWork;
         };
+        tempTotalHours += hoursToAdd
         //console.log('hours', tempTotalHours)
         
         const newTask = JSON.parse(JSON.stringify(assignment));
@@ -48,7 +49,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
                 newTask.hoursSupposedtoWork = newHourstoAdd
                 newTask.hoursWorked = 0
                 scheduler[arrayIndex+2].unshift(newTask)
-                nextDayAssignments[dayIndex].hoursSupposedtoWork -= newHourstoAdd;
+                //nextDayAssignments[dayIndex].hoursSupposedtoWork -= newHourstoAdd;
                 isBackedUp = reCheckTotalHours(scheduler[arrayIndex+2], dailyStudyTime)
     
                 for(let i=0; i<scheduler[arrayIndex+2].length; i++){
@@ -68,6 +69,9 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
             }
            
 
+        }
+        else{
+            nextDayAssignments[dayIndex].hoursSupposedtoWork += hoursToAdd;
         }
     
 
