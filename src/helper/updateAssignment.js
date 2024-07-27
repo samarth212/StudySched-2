@@ -15,10 +15,23 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
         return scheduler;
     }
     else if(scheduler && assignment.hoursSupposedtoWork < hoursCompletedToday){
+
+        let includesAssignment = false
         const hoursToSubtract = hoursCompletedToday - assignment.hoursSupposedtoWork;
         assignment.hoursWorked = hoursCompletedToday;
-        nextDayAssignments[dayIndex].hoursSupposedtoWork -= hoursToSubtract;
+
+        for(let i=0; i<nextDayAssignments.length; i++){
+            if(nextDayAssignments[i].name === assignment.name){
+                includesAssignment = true;
+                break;
+            }
+        };
+
+        if(includesAssignment){
+            nextDayAssignments[0].hoursSupposedtoWork -= hoursToSubtract;
+        }
         return scheduler;
+
     }
     else{
         const hoursToAdd = assignment.hoursSupposedtoWork - hoursCompletedToday;
