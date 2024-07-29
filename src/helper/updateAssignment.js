@@ -80,6 +80,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
                     const newHourstoAdd = tempTotalHours - dailyStudyTime;
                     newTask.hoursSupposedtoWork = newHourstoAdd
                     newTask.hoursWorked = 0
+                    newTask.dateOfCompletion = scheduler[arrayIndex+2][0].dateOfCompletion
                     scheduler[arrayIndex+2].unshift(newTask)
                     //nextDayAssignments[dayIndex].hoursSupposedtoWork -= newHourstoAdd;
                     isBackedUp = reCheckTotalHours(scheduler[arrayIndex+2], dailyStudyTime)
@@ -92,6 +93,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
                     const newHourstoAdd = tempTotalHours - dailyStudyTime;
                     newTask.hoursSupposedtoWork = newHourstoAdd
                     newTask.hoursWorked = 0
+                    newTask.dateOfCompletion = nextDayAssignments[0].dateOfCompletion = null ? addOneDay(assignment.dateOfCompletion):nextDayAssignments[0].dateOfCompletion
                     nextDayAssignments.unshift(newTask)
                     isBackedUp = reCheckTotalHours(nextDayAssignments, dailyStudyTime)
         
