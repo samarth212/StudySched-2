@@ -133,7 +133,7 @@ const Schedule = () => {
     startShiftAssignmentsScheduler(finalSchedule)
   }, [finalSchedule])
 
-
+  
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
@@ -146,16 +146,6 @@ const Schedule = () => {
             
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
-    
-              {finalSchedule[index] && finalSchedule[index][0] && finalSchedule[index][0].dateOfCompletion ? 
-                (finalSchedule[index][0].dateOfCompletion === new Date().toISOString().split('T')[0] 
-                  ? startShiftAssignmentsScheduler(finalSchedule, index) 
-                  : console.log(false)
-                ) 
-              : null}
-
-
-
                 {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
               {day.map((assignment, idx) => (

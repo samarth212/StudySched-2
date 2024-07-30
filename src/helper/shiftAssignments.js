@@ -2,8 +2,6 @@
 
 function shiftAssignments(scheduler, arrayIndex=0){
 
-    
-
     const todayAssignments = scheduler[arrayIndex]
     const nextDayAssignments = scheduler[arrayIndex+1]
 
@@ -20,8 +18,7 @@ function shiftAssignments(scheduler, arrayIndex=0){
         nextDayAssignments.unshift(assignmentsToShift[i])
     };
 
-
-
+    scheduler.shift()
 
 };
 
