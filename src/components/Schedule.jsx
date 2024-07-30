@@ -14,6 +14,8 @@ import updateAssignment from "../helper/updateAssignment";
 import formatDate from "../helper/formatDate";
 import Button from "@mui/material/Button";
 
+import startShiftAssignmentsScheduler from "../helper/shiftAssignments";
+
 import { unstable_useViewTransitionState } from "react-router-dom";
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
@@ -110,24 +112,6 @@ const Schedule = () => {
 
     assignment.isHoursSaved = true
     
-    
-
-    /*
-    const value = tempHours[assignment.assignment.description];
-    let objIndex = -1;
-    let tempAssignments = [...assignments];
-    for (let i = 0; i < tempAssignments.length; i++) {
-      if (
-        tempAssignments[i].description === assignment.assignment.description
-      ) {
-        objIndex = i;
-        break;
-      }
-    }
-    tempAssignments[objIndex].hoursWorked = Number(value);
-    setAssignments(tempAssignments);
-    setNewHours(tempAssignments);
-    */
 
   };
 
@@ -145,6 +129,10 @@ const Schedule = () => {
     //console.log(tempAssignments);
   };
 
+  useEffect(() => {
+    startShiftAssignmentsScheduler(finalSchedule)
+  }, [finalSchedule])
+
 
   return (
     <>
@@ -155,9 +143,18 @@ const Schedule = () => {
         <div className="flex flex-col overflow-y-auto">
            
           {finalSchedule.map((day, index) => (
+            
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
     
+              {finalSchedule[index] && finalSchedule[index][0] && finalSchedule[index][0].dateOfCompletion ? 
+                (finalSchedule[index][0].dateOfCompletion === new Date().toISOString().split('T')[0] 
+                  ? startShiftAssignmentsScheduler(finalSchedule, index) 
+                  : console.log(false)
+                ) 
+              : null}
+
+
 
                 {formatDate(day[0]?.dateOfCompletion.toString())}
               </p>
