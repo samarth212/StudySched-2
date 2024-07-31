@@ -69,7 +69,7 @@ const Schedule = () => {
 
         if(!currentScheduler){
           if (assignments && sort) {
-            console.log('hello')
+            //console.log('hello')
             const allocatedSchedule = sortAssignments(assignments, availableHours);
             setFinalSchedule(allocatedSchedule);
             setSort(false)
@@ -78,8 +78,10 @@ const Schedule = () => {
 
         }
         else{
+          console.log('already there')
           setFinalSchedule(currentScheduler)
-        }
+        };
+        
 
       };
 
@@ -90,6 +92,29 @@ const Schedule = () => {
     
   }, [availableHours]);
 
+
+  useEffect(() => {
+
+    const updateScheduler = async () => {
+
+      if(finalSchedule){
+        const db = getDatabase(app);
+        const dbRef = ref(
+          db,
+          "users/" + localStorage.getItem("uid") + "/activities"
+        );
+        
+        update(dbRef, {scheduler: finalSchedule}).catch((error) => {
+          console.error("Error updating scheduler:", error);
+        });
+
+      };
+
+    };
+
+    updateScheduler();
+
+  }, [finalSchedule])
 
 
 
@@ -114,11 +139,6 @@ const Schedule = () => {
   }, [newHours]);
 
 
-  const handleAssignmentClick = (assignment) => {
-    setSelectedAssignment(assignment.assignment);
-    setShowModal(true);
-  };
-
   const [tempHours, setTempHours] = useState({});
 
   const handleHoursWorkedChange = (value, assignment) => {
@@ -132,11 +152,10 @@ const Schedule = () => {
   const handleHoursSave = (assignment, arrayIndex, dayIndex) => {
 
     const value = tempHours[assignment.assignment.description];
-    console.log(value)
     const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value, availableHours)
     
     setFinalSchedule(newSchedule);
-    console.log(finalSchedule)
+    console.log("final Schedule", finalSchedule)
     setTempHours((prev) => ({
         ...prev,
         [assignment.assignment.description]: value,
@@ -147,24 +166,13 @@ const Schedule = () => {
 
   };
 
-  const updateHoursSupposedtoWork = (assignment) => {
-    let tempAssignments = [...assignments];
-    for (let i = 0; i < tempAssignments.length; i++) {
-      if (
-        tempAssignments[i].description === assignment.assignment.description
-      ) {
-        tempAssignments[i].hoursSupposedtoWork = assignment.hoursSupposedtoWork;
-        break;
-      }
-    }
-    setAssignments(tempAssignments);
-    //console.log(tempAssignments);
-  };
 
+
+  /*
   useEffect(() => {
     startShiftAssignmentsScheduler(finalSchedule)
   }, [finalSchedule])
-
+*/
   
   return (
     <>
