@@ -50,17 +50,49 @@ const Schedule = () => {
   }, []);
 
   const [sort, setSort] = useState(true);
-  useEffect(() => {
-  
-    if (assignments && sort) {
-   
-      const allocatedSchedule = sortAssignments(assignments, availableHours);
-      setFinalSchedule(allocatedSchedule);
-      setSort(false)
 
+
+  useEffect(() => {
+
+    const fetchCurrentScheduler = async () =>{
+      const db = getDatabase(app);
+      const dbRef = ref(
+        db,
+        "users/" + localStorage.getItem("uid") + "/activities"
+      );
+      const snapshot = await get(dbRef);
+      let currentScheduler = null
+
+      if(snapshot.exists()){
+  
+        currentScheduler = snapshot.val().scheduler;
+
+        if(!currentScheduler){
+          if (assignments && sort) {
+            console.log('hello')
+            const allocatedSchedule = sortAssignments(assignments, availableHours);
+            setFinalSchedule(allocatedSchedule);
+            setSort(false)
+            update(dbRef, {scheduler: allocatedSchedule})
+          };
+
+        }
+        else{
+          setFinalSchedule(currentScheduler)
+        }
+
+      };
+
+
+    };
+    fetchCurrentScheduler();
+  
     
-    }
   }, [availableHours]);
+
+
+
+
 
   useEffect(() => {
     const updateHours = async () => {

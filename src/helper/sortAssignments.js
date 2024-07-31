@@ -1,3 +1,6 @@
+//ONE TIME CALL
+
+
 export default function sortAssignments(
   unsortedAssignments,
   availableHours,
