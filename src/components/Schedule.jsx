@@ -179,7 +179,7 @@ const Schedule = () => {
 
   
   useEffect(() => {
-    startShiftAssignmentsScheduler(finalSchedule)
+    startShiftAssignmentsScheduler([...finalSchedule])
   }, [finalSchedule])
 
   
