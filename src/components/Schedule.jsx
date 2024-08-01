@@ -177,11 +177,11 @@ const Schedule = () => {
 
 
 
-  /*
+  
   useEffect(() => {
     startShiftAssignmentsScheduler(finalSchedule)
   }, [finalSchedule])
-*/
+
   
   return (
     <>
