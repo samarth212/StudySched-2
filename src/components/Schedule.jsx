@@ -26,6 +26,7 @@ const Schedule = () => {
   const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
 
+  /*
   useEffect(() => {
     const fetchData = async () => {
       const db = getDatabase(app);
@@ -49,6 +50,7 @@ const Schedule = () => {
     
 
   }, []);
+  */
 
   const [sort, setSort] = useState(true);
 
@@ -62,13 +64,17 @@ const Schedule = () => {
         "users/" + localStorage.getItem("uid") + "/activities"
       );
       const snapshot = await get(dbRef);
-      let currentScheduler = null
 
       if(snapshot.exists()){
   
-        currentScheduler = snapshot.val().scheduler;
+        const currentScheduler = snapshot.val().scheduler;
+        console.log('DB VAL:', currentScheduler)
 
         if(!currentScheduler){
+
+          setAvailableHours(snapshot.val().hoursPerDay);
+          setAssignments(snapshot.val().assignments);
+
           if (assignments && sort) {
             //console.log('hello')
             const allocatedSchedule = sortAssignments(assignments, availableHours);
@@ -158,7 +164,7 @@ const Schedule = () => {
     const newSchedule = updateAssignment([...finalSchedule], arrayIndex, dayIndex, value, availableHours)
     
     setFinalSchedule(newSchedule);
-    console.log("final Schedule", finalSchedule)
+    //console.log("final Schedule", finalSchedule)
     setTempHours((prev) => ({
         ...prev,
         [assignment.assignment.description]: value,
