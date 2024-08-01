@@ -25,6 +25,7 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState(false);
   const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       const db = getDatabase(app);
@@ -94,6 +95,8 @@ const Schedule = () => {
 
 
   useEffect(() => {
+    console.log('change in sched')
+
 
     const updateScheduler = async () => {
 
@@ -152,7 +155,7 @@ const Schedule = () => {
   const handleHoursSave = (assignment, arrayIndex, dayIndex) => {
 
     const value = tempHours[assignment.assignment.description];
-    const newSchedule = updateAssignment(finalSchedule, arrayIndex, dayIndex, value, availableHours)
+    const newSchedule = updateAssignment([...finalSchedule], arrayIndex, dayIndex, value, availableHours)
     
     setFinalSchedule(newSchedule);
     console.log("final Schedule", finalSchedule)
