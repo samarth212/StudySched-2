@@ -14,9 +14,10 @@ import updateAssignment from "../helper/updateAssignment";
 import formatDate from "../helper/formatDate";
 import Button from "@mui/material/Button";
 
-import startShiftAssignmentsScheduler from "../helper/shiftAssignments";
 
 import { unstable_useViewTransitionState } from "react-router-dom";
+import shiftAssignments from "../helper/shiftAssignments";
+
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -179,7 +180,37 @@ const Schedule = () => {
 
   
   useEffect(() => {
-    startShiftAssignmentsScheduler([...finalSchedule])
+
+    const shiftSchedule = async () => {
+      const db = getDatabase(app);
+      const dbRef = ref(
+        db,
+        "users/" + localStorage.getItem("uid") + "/activities"
+      );
+
+      const snapshot = await get(dbRef);
+
+      if(snapshot.exists()){
+        let tomorrow = snapshot.val().tomorrow.split('T')[0];
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+        today = today.toISOString().split('T')[0];
+
+        if(today === tomorrow){
+          shiftAssignments([...finalSchedule])
+          tomorrow = new Date(tomorrow)
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(0, 0, 0, 0);
+          tomorrow = tomorrow.toISOString()
+          update(dbRef, {tomorrow: tomorrow})
+        };
+
+      }
+
+    };
+
+    shiftSchedule()
+
   }, [finalSchedule])
 
   

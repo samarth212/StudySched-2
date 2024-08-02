@@ -67,11 +67,17 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
   setEvents(newEvents);
   const db = getDatabase(app);
 
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow = tomorrow.toISOString()
+
   set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
     assignments: newAssignments,
     events: newEvents,
     hoursPerDay: 4,
     todo: "",
     scheduler: null,
+    tomorrow: tomorrow,
   });
 }
