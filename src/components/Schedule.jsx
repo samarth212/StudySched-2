@@ -232,7 +232,7 @@ const Schedule = () => {
   
   return (
     <>
-      <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-2/5 overflow-y-scroll h-screen">
+      <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
         <p style={{color: "red", fontSize:"24px"}}>red = that day is backed up</p>
@@ -249,8 +249,8 @@ const Schedule = () => {
                   key={idx}
                   className={
                     assignment.hoursWorked >= assignment.hoursSupposedtoWork
-                      ? "flex items-center mt-4 opacity-50"
-                      : "flex items-center mt-"
+                      ? "flex items-center mt-4 opacity-50 mb-6 mt-4"
+                      : "flex items-center mb-6 mt-4"
                   }
                   
                   //onClick={() => handleAssignmentClick(assignment)}
