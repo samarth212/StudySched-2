@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 
 import { unstable_useViewTransitionState } from "react-router-dom";
 import shiftAssignments from "../helper/shiftAssignments";
+import resetAssignment from "../helper/resetAssignment";
 
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
@@ -24,7 +25,6 @@ const Schedule = () => {
   const [finalSchedule, setFinalSchedule] = useState([]);
   const [availableHours, setAvailableHours] = useState(0);
   const [assignments, setAssignments] = useState(false);
-  const [resetAssignments, setResetAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
 
   /*
@@ -142,7 +142,6 @@ const Schedule = () => {
             assignments,
           }
         );
-        setResetAssignments(true);
       }
     };
     updateHours();
@@ -176,6 +175,23 @@ const Schedule = () => {
 
   };
 
+  const handleAssignmentReset = (scheduler, arrayIndex, dayIndex) => {
+    
+    let assignment = scheduler[arrayIndex][dayIndex]
+    const value = tempHours[assignment.assignment.description];
+
+    const newSchedule = resetAssignment(scheduler, arrayIndex, dayIndex)
+    
+    setFinalSchedule(newSchedule);
+    //console.log("final Schedule", finalSchedule)
+    setTempHours((prev) => ({
+        ...prev,
+        [assignment.assignment.description]: value,
+    }));
+
+    assignment.isHoursSaved = false
+  };
+
 
 
   
@@ -205,7 +221,7 @@ const Schedule = () => {
           update(dbRef, {tomorrow: tomorrow})
         };
 
-      }
+      };
 
     };
 
@@ -289,7 +305,15 @@ const Schedule = () => {
                           >
                             Save
                           </Button>
+                          
                         </FormControl>
+                        <Button 
+                            variant="contained"
+                            sx={{ width: "40px"}}
+                            onClick={() => handleAssignmentReset([...finalSchedule], index, idx)}>
+                              Reset Hours
+                          </Button>
+
                       </h2>
                       <div className="card-actions justify-end">
                         <div className="badge badge-outline text-white">
