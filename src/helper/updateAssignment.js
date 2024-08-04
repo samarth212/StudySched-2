@@ -5,7 +5,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
 
     let isLastAssignment = false
 
-    const nextDayAssignments = scheduler[arrayIndex+1]
+    const nextDayAssignments = scheduler[arrayIndex+1] ? scheduler[arrayIndex+1]: []
 
     //console.log("next", nextDayAssignments[0])
     if (!nextDayAssignments[0]){
@@ -65,6 +65,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
             console.log('date', date)
             newTask.dateOfCompletion = date
             nextDayAssignments.unshift(newTask)
+            scheduler.push(nextDayAssignments)
             return scheduler
         }
         else{
