@@ -207,21 +207,28 @@ const Schedule = () => {
       const snapshot = await get(dbRef);
 
       if(snapshot.exists()){
-        let tomorrow = snapshot.val().tomorrow.split('T')[0];
+        let tomorrow = snapshot.val().tomorrow.split('T')[0]
         let today = new Date();
         today.setHours(0, 0, 0, 0);
-        today = today.toISOString().split('T')[0];
+        today = today.toISOString().split('T')[0]
 
-        if(today === tomorrow){
-          shiftAssignments([...finalSchedule])
-          tomorrow = new Date(tomorrow)
+        if(today === tomorrow && finalSchedule[0]){
+          const tempSchedule = shiftAssignments([...finalSchedule], 0)
+          setFinalSchedule(tempSchedule)
+          
+          tomorrow = new Date();
+          tomorrow.setHours(0, 0, 0, 0)
           tomorrow.setDate(tomorrow.getDate() + 1);
           tomorrow.setHours(0, 0, 0, 0);
           tomorrow = tomorrow.toISOString()
           update(dbRef, {tomorrow: tomorrow})
+
         };
 
+
       };
+
+      
 
     };
 

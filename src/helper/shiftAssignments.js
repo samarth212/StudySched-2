@@ -23,5 +23,7 @@ export default function shiftAssignments(scheduler, arrayIndex=0){
         scheduler.shift()
     
     }
+
+    return scheduler;
     
 };
