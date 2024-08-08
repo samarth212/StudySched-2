@@ -18,10 +18,12 @@ import Button from "@mui/material/Button";
 import { unstable_useViewTransitionState } from "react-router-dom";
 import shiftAssignments from "../helper/shiftAssignments";
 import resetAssignment from "../helper/resetAssignment";
+import MoveAssignment from "./MoveAssignment";
 
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showMoveModal, setShowMoveModal] = useState(false);
   const [finalSchedule, setFinalSchedule] = useState([]);
   const [availableHours, setAvailableHours] = useState(0);
   const [assignments, setAssignments] = useState(false);
@@ -236,6 +238,10 @@ const Schedule = () => {
 
   }, [finalSchedule])
 
+  const handleMoveClick = () =>{
+    setShowMoveModal(true)
+  };
+
   
   return (
     <>
@@ -314,12 +320,18 @@ const Schedule = () => {
                           </Button>
                           
                         </FormControl>
-                        <Button 
+
+                        
+                        {/* <Button 
                             variant="contained"
                             sx={{ width: "40px"}}
                             onClick={() => handleAssignmentReset([...finalSchedule], index, idx)}>
                               Reset Hours
-                          </Button>
+                          </Button> */}
+
+                        <Button variant="contained" sx={{ width: "40px"}} onClick={handleMoveClick}>
+                          MOVE
+                        </Button>
 
                       </h2>
                       <div className="card-actions justify-end">
@@ -343,6 +355,7 @@ const Schedule = () => {
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
       />
+      <MoveAssignment show={showMoveModal} onClose={() => setShowMoveModal(false)}></MoveAssignment>
     </>
   );
 };
