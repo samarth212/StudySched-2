@@ -28,6 +28,7 @@ const Schedule = () => {
   const [availableHours, setAvailableHours] = useState(0);
   const [assignments, setAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
+  const [selectedIndices, setSelectedIndices] = useState([null, null])
 
   /*
   useEffect(() => {
@@ -238,7 +239,12 @@ const Schedule = () => {
 
   }, [finalSchedule])
 
-  const handleMoveClick = () =>{
+  const updateMovedFinalSchedule = (newSchedule) => {
+    setFinalSchedule(newSchedule);
+  };
+
+  const handleMoveClick = (arrayIndex, dayIndex) =>{
+    setSelectedIndices([arrayIndex, dayIndex])
     setShowMoveModal(true)
   };
 
@@ -329,7 +335,7 @@ const Schedule = () => {
                               Reset Hours
                           </Button> */}
 
-                        <Button variant="contained" sx={{ width: "40px"}} onClick={handleMoveClick}>
+                        <Button variant="contained" sx={{ width: "40px"}} onClick={() => handleMoveClick(index, idx)}>
                           MOVE
                         </Button>
 
@@ -355,7 +361,7 @@ const Schedule = () => {
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
       />
-      <MoveAssignment show={showMoveModal} onClose={() => setShowMoveModal(false)}></MoveAssignment>
+      <MoveAssignment show={showMoveModal} onClose={() => setShowMoveModal(false)} scheduler={[...finalSchedule]} arrayIndex={selectedIndices[0]} dayIndex={selectedIndices[1]} updateMovedFinalSchedule={updateMovedFinalSchedule}></MoveAssignment>
     </>
   );
 };

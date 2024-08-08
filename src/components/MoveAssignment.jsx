@@ -1,9 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
-const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex }) => {
+const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex, updateMovedFinalSchedule}) => {
   if (!show) {
     return null;
   }
+
+  let tempSchedule = [...scheduler]
+
+
+  let assignment = tempSchedule[arrayIndex][dayIndex]
+  const [selectedDate, setSelectedDate] = useState(null);
+  let insertIndex = null
+
+
+  const handleDateChange = (date) => {
+    const formattedDate = format(date, 'yyyy-MM-dd');
+    setSelectedDate(formattedDate);
+  };
+
+  function moveItem(){
+    if(selectedDate){
+        for(let i = 0; i<tempSchedule.length; i++){
+            if(tempSchedule[i][0] && tempSchedule[i][0].dateOfCompletion === selectedDate){
+                insertIndex = i
+                console.log('INSERT INDEX:', insertIndex)
+            };
+        };
+        assignment.dateOfCompletion = selectedDate
+        insertIndex != null ? tempSchedule[insertIndex].push(assignment): null
+        tempSchedule[arrayIndex].splice(dayIndex, 1)
+        updateMovedFinalSchedule(tempSchedule);
+
+    };
+    
+    console.log(tempSchedule)
+  };
+
+  const handleClose = () => {
+    moveItem();
+    onClose();
+  }
+
+
+
+  
 
   return (
     <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
@@ -11,14 +54,27 @@ const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex }) => {
 
       <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-4xl sm:w-full">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800">Move Assignment</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Move Assignment: {assignment.name}</h2>
+          
           <p className="mt-4 text-gray-600">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Inventore sapiente est magnam quas vel at soluta eius atque corrupti aut fugit corporis iste similique, quos minima alias! Quibusdam fugit dolor aspernatur sint alias vitae tenetur? Harum voluptates magnam aspernatur suscipit repudiandae non, distinctio consequuntur error nobis recusandae tempora culpa, unde consectetur natus exercitationem omnis dolore, quas ducimus id fugiat necessitatibus quo nihil impedit. Reprehenderit voluptatibus incidunt vitae, molestiae dignissimos modi laboriosam deleniti illum expedita ipsam id? Culpa, temporibus saepe beatae voluptas sapiente nulla adipisci. Quae quos, beatae similique quibusdam saepe nulla sunt eaque quam tempora doloribus incidunt asperiores sequi natus cumque, repudiandae, quia laudantium suscipit vero dolorem culpa rerum. Autem explicabo enim fuga doloribus consequatur nemo hic inventore dolorum a!
+            Selected Date: 
+            {selectedDate}
           </p>
+          <div className="mt-24">
+            <label className="block text-gray-700 mb-8">Select New Date:</label>
+            <DatePicker
+              selected={selectedDate ? new Date(selectedDate) : null}
+              onChange={handleDateChange}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="yyyy-mm-dd"
+              className="border p-2 rounded w-full bg-white"
+            />
+          </div>
+          
           <div className="mt-6 flex justify-end">
             <button
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none"
-              onClick={onClose}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
+              onClick={handleClose}
             >
               Close
             </button>
