@@ -88,7 +88,7 @@ const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex, update
                     tempSchedule[arrayIndex+1].splice(dayIndex, 1)
                 }
                 else{
-                    tempSchedule[arrayIndex+1].splice(dayIndex, 1)
+                    tempSchedule[arrayIndex].splice(dayIndex, 1)
                 }
             }
         }
