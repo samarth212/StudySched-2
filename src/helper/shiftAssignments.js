@@ -17,6 +17,7 @@ export default function shiftAssignments(scheduler, arrayIndex=0){
         };
     
         for(let i = 0; i < assignmentsToShift.length; i++){
+            assignmentsToShift[i].dateOfCompletion = nextDayAssignments[0].dateOfCompletion;
             nextDayAssignments.unshift(assignmentsToShift[i])
         };
     

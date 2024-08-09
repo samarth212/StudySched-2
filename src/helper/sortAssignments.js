@@ -114,5 +114,12 @@ export default function sortAssignments(
     }
   }
 
+  // for (let i = 0; i < scheduler.length; i++) {
+  //   if (!scheduler[i][0]) {
+  //     scheduler = scheduler.slice(0, i);
+  //     break; 
+  //   }
+  // }
+
   return scheduler;
 }

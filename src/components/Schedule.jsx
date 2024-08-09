@@ -218,6 +218,7 @@ const Schedule = () => {
         if(today === tomorrow && finalSchedule[0]){
           const tempSchedule = shiftAssignments([...finalSchedule], 0)
           setFinalSchedule(tempSchedule)
+          console.log('tomrorw test: ', tempSchedule, finalSchedule)
           
           tomorrow = new Date();
           tomorrow.setHours(0, 0, 0, 0)

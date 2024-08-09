@@ -21,17 +21,82 @@ const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex, update
     setSelectedDate(formattedDate);
   };
 
+  function removeEmptyArrays(arrayOfArrays) {
+    return arrayOfArrays.filter(innerArray => innerArray.length > 0);
+  }
+
+  
+
+  let lastIndex = tempSchedule.length - 1
+
+
+  
+
   function moveItem(){
+
+    console.log(lastIndex)
+
     if(selectedDate){
         for(let i = 0; i<tempSchedule.length; i++){
             if(tempSchedule[i][0] && tempSchedule[i][0].dateOfCompletion === selectedDate){
                 insertIndex = i
                 console.log('INSERT INDEX:', insertIndex)
+                break;
             };
         };
-        assignment.dateOfCompletion = selectedDate
-        insertIndex != null ? tempSchedule[insertIndex].push(assignment): null
-        tempSchedule[arrayIndex].splice(dayIndex, 1)
+        if(insertIndex || insertIndex === 0){
+            let tempAssignment = {...assignment}
+            tempAssignment.dateOfCompletion = selectedDate
+            tempSchedule[insertIndex].push(tempAssignment)
+            tempSchedule[arrayIndex].splice(dayIndex, 1)
+        }
+        else{
+            tempSchedule = removeEmptyArrays(tempSchedule)
+            console.log('the lenght: ', tempSchedule.length)
+
+            if(tempSchedule[0][0].dateOfCompletion > selectedDate && tempSchedule[0][0].dateOfCompletion){
+                let tempAssignment = {...assignment}
+                tempAssignment.dateOfCompletion = selectedDate
+                tempSchedule.unshift([tempAssignment])
+                tempSchedule[arrayIndex].splice(dayIndex, 1)
+            }
+            else if(tempSchedule[tempSchedule.length - 1][0].dateOfCompletion < selectedDate && tempSchedule[tempSchedule.length - 1][0].dateOfCompletion){
+                let tempAssignment = {...assignment}
+                tempAssignment.dateOfCompletion = selectedDate
+                tempSchedule.push([tempAssignment])
+                tempSchedule[arrayIndex].splice(dayIndex, 1)
+            }
+            else{
+
+                //5
+                //[ 1, 2, 3, 4, 6, 7, 8, 9, 10 ]
+                //4
+
+                let indexToInsert = 0
+                for(let i = 0; i<tempSchedule.length; i++){
+                    if(tempSchedule[i][0] && tempSchedule[i][0].dateOfCompletion > selectedDate){
+                        break;
+                    };
+                    indexToInsert += 1;
+                };
+
+                console.log('indextoinsert', indexToInsert)
+                let tempAssignment = {...assignment}
+                tempAssignment.dateOfCompletion = selectedDate
+                tempSchedule.splice(indexToInsert, 0, [tempAssignment])
+                if(indexToInsert < arrayIndex){
+                    tempSchedule[arrayIndex+1].splice(dayIndex, 1)
+                }
+                else{
+                    tempSchedule[arrayIndex+1].splice(dayIndex, 1)
+                }
+            }
+        }
+        
+       
+        
+        
+        tempSchedule = removeEmptyArrays(tempSchedule)
         updateMovedFinalSchedule(tempSchedule);
 
     };
