@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 
+
 const MoveAssignment = ({ show, onClose, scheduler, arrayIndex, dayIndex, updateMovedFinalSchedule}) => {
   if (!show) {
     return null;
