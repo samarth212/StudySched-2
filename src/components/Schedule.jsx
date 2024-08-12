@@ -14,7 +14,6 @@ import updateAssignment from "../helper/updateAssignment";
 import formatDate from "../helper/formatDate";
 import Button from "@mui/material/Button";
 
-
 import { unstable_useViewTransitionState } from "react-router-dom";
 import shiftAssignments from "../helper/shiftAssignments";
 import resetAssignment from "../helper/resetAssignment";
@@ -28,7 +27,7 @@ const Schedule = () => {
   const [availableHours, setAvailableHours] = useState(0);
   const [assignments, setAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
-  const [selectedIndices, setSelectedIndices] = useState([null, null])
+  const [selectedIndices, setSelectedIndices] = useState([null, null]);
 
   /*
   useEffect(() => {
@@ -58,10 +57,8 @@ const Schedule = () => {
 
   const [sort, setSort] = useState(true);
 
-
   useEffect(() => {
-
-    const fetchCurrentScheduler = async () =>{
+    const fetchCurrentScheduler = async () => {
       const db = getDatabase(app);
       const dbRef = ref(
         db,
@@ -69,68 +66,52 @@ const Schedule = () => {
       );
       const snapshot = await get(dbRef);
 
-      if(snapshot.exists()){
-  
+      if (snapshot.exists()) {
         const currentScheduler = snapshot.val().scheduler;
-        console.log('DB VAL:', currentScheduler)
+        console.log("DB VAL:", currentScheduler);
 
-        if(!currentScheduler){
-
+        if (!currentScheduler) {
           setAvailableHours(snapshot.val().hoursPerDay);
           setAssignments(snapshot.val().assignments);
 
           if (assignments && sort) {
             //console.log('hello')
-            const allocatedSchedule = sortAssignments(assignments, availableHours);
+            const allocatedSchedule = sortAssignments(
+              assignments,
+              availableHours
+            );
             setFinalSchedule(allocatedSchedule);
-            setSort(false)
-            update(dbRef, {scheduler: allocatedSchedule})
-          };
-
+            setSort(false);
+            update(dbRef, { scheduler: allocatedSchedule });
+          }
+        } else {
+          console.log("already there");
+          setFinalSchedule(currentScheduler);
         }
-        else{
-          console.log('already there')
-          setFinalSchedule(currentScheduler)
-        };
-        
-
-      };
-
-
+      }
     };
     fetchCurrentScheduler();
-  
-    
   }, [availableHours]);
 
-
   useEffect(() => {
-    console.log('change in sched')
-
+    console.log("change in sched");
 
     const updateScheduler = async () => {
-
-      if(finalSchedule){
+      if (finalSchedule) {
         const db = getDatabase(app);
         const dbRef = ref(
           db,
           "users/" + localStorage.getItem("uid") + "/activities"
         );
-        
-        update(dbRef, {scheduler: finalSchedule}).catch((error) => {
+
+        update(dbRef, { scheduler: finalSchedule }).catch((error) => {
           console.error("Error updating scheduler:", error);
         });
-
-      };
-
+      }
     };
 
     updateScheduler();
-
-  }, [finalSchedule])
-
-
-
+  }, [finalSchedule]);
 
   useEffect(() => {
     const updateHours = async () => {
@@ -150,7 +131,6 @@ const Schedule = () => {
     updateHours();
   }, [newHours]);
 
-
   const [tempHours, setTempHours] = useState({});
 
   const handleHoursWorkedChange = (value, assignment) => {
@@ -160,46 +140,43 @@ const Schedule = () => {
     }));
   };
 
-
   const handleHoursSave = (assignment, arrayIndex, dayIndex) => {
-
     const value = tempHours[assignment.assignment.description];
-    const newSchedule = updateAssignment([...finalSchedule], arrayIndex, dayIndex, value, availableHours)
-    
+    const newSchedule = updateAssignment(
+      [...finalSchedule],
+      arrayIndex,
+      dayIndex,
+      value,
+      availableHours
+    );
+
     setFinalSchedule(newSchedule);
     //console.log("final Schedule", finalSchedule)
     setTempHours((prev) => ({
-        ...prev,
-        [assignment.assignment.description]: value,
+      ...prev,
+      [assignment.assignment.description]: value,
     }));
 
-    assignment.isHoursSaved = true
-    
-
+    assignment.isHoursSaved = true;
   };
 
   const handleAssignmentReset = (scheduler, arrayIndex, dayIndex) => {
-    
-    let assignment = scheduler[arrayIndex][dayIndex]
+    let assignment = scheduler[arrayIndex][dayIndex];
     const value = tempHours[assignment.assignment.description];
 
-    const newSchedule = resetAssignment(scheduler, arrayIndex, dayIndex)
-    
+    const newSchedule = resetAssignment(scheduler, arrayIndex, dayIndex);
+
     setFinalSchedule(newSchedule);
     //console.log("final Schedule", finalSchedule)
     setTempHours((prev) => ({
-        ...prev,
-        [assignment.assignment.description]: value,
+      ...prev,
+      [assignment.assignment.description]: value,
     }));
 
-    assignment.isHoursSaved = false
+    assignment.isHoursSaved = false;
   };
 
-
-
-  
   useEffect(() => {
-
     const shiftSchedule = async () => {
       const db = getDatabase(app);
       const dbRef = ref(
@@ -209,57 +186,49 @@ const Schedule = () => {
 
       const snapshot = await get(dbRef);
 
-      if(snapshot.exists()){
-        let tomorrow = snapshot.val().tomorrow.split('T')[0]
+      if (snapshot.exists()) {
+        let tomorrow = snapshot.val().tomorrow.split("T")[0];
         let today = new Date();
         today.setHours(0, 0, 0, 0);
-        today = today.toISOString().split('T')[0]
+        today = today.toISOString().split("T")[0];
 
-        if(today === tomorrow && finalSchedule[0]){
-          const tempSchedule = shiftAssignments([...finalSchedule], 0)
-          setFinalSchedule(tempSchedule)
-          console.log('tomrorw test: ', tempSchedule, finalSchedule)
-          
+        if (today === tomorrow && finalSchedule[0]) {
+          const tempSchedule = shiftAssignments([...finalSchedule], 0);
+          setFinalSchedule(tempSchedule);
+          console.log("tomrorw test: ", tempSchedule, finalSchedule);
+
           tomorrow = new Date();
-          tomorrow.setHours(0, 0, 0, 0)
+          tomorrow.setHours(0, 0, 0, 0);
           tomorrow.setDate(tomorrow.getDate() + 1);
           tomorrow.setHours(0, 0, 0, 0);
-          tomorrow = tomorrow.toISOString()
-          update(dbRef, {tomorrow: tomorrow})
-
-        };
-
-
-      };
-
-      
-
+          tomorrow = tomorrow.toISOString();
+          update(dbRef, { tomorrow: tomorrow });
+        }
+      }
     };
 
-    shiftSchedule()
-
-  }, [finalSchedule])
+    shiftSchedule();
+  }, [finalSchedule]);
 
   const updateMovedFinalSchedule = (newSchedule) => {
     setFinalSchedule(newSchedule);
   };
 
-  const handleMoveClick = (arrayIndex, dayIndex) =>{
-    setSelectedIndices([arrayIndex, dayIndex])
-    setShowMoveModal(true)
+  const handleMoveClick = (arrayIndex, dayIndex) => {
+    setSelectedIndices([arrayIndex, dayIndex]);
+    setShowMoveModal(true);
   };
 
-  
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-        <p style={{color: "red", fontSize:"24px"}}>red = that day is backed up</p>
+        <p style={{ color: "red", fontSize: "24px" }}>
+          red = that day is backed up
+        </p>
         <div className="flex flex-col overflow-y-auto">
-           
           {finalSchedule.map((day, index) => (
-            
             <div key={index} className="flex-col items-center mb-4 mt-12">
               <p className="text-xl font-semibold">
                 {formatDate(day[0]?.dateOfCompletion.toString())}
@@ -272,14 +241,16 @@ const Schedule = () => {
                       ? "flex items-center mt-4 opacity-50 mb-6 mt-4"
                       : "flex items-center mb-6 mt-4"
                   }
-                  
+
                   //onClick={() => handleAssignmentClick(assignment)}
                 >
                   <div
                     className={
                       assignment.hoursWorked >= assignment.hoursSupposedtoWork
                         ? "card shadow-lg bg-green-600 flex-1"
-                        : (assignment.isBackedUp ? "card shadow-lg bg-red-500 flex-1": "card shadow-lg bg-slate-500 flex-1")
+                        : assignment.isBackedUp
+                        ? "card shadow-lg bg-red-500 flex-1"
+                        : "card shadow-lg bg-slate-500 flex-1"
                     }
                   >
                     <div className="card-body">
@@ -290,7 +261,13 @@ const Schedule = () => {
                         <div className="badge badge-secondary text-white ml-2 w-22">
                           {assignment.hoursSupposedtoWork} Hours
                         </div>
-                        <FormControl fullWidth variant="filled" sx={{display: assignment.isHoursSaved ? "none": "flex"}}>
+                        <FormControl
+                          fullWidth
+                          variant="filled"
+                          sx={{
+                            display: assignment.isHoursSaved ? "none" : "flex",
+                          }}
+                        >
                           <InputLabel id="demo-simple-select-label">
                             Hours Worked
                           </InputLabel>
@@ -315,20 +292,22 @@ const Schedule = () => {
                             ]
                               .map((i) => i)
                               .map((hour) => (
-                                <MenuItem key={ Math.random()}value={hour}>{hour} </MenuItem>
+                                <MenuItem key={Math.random()} value={hour}>
+                                  {hour}{" "}
+                                </MenuItem>
                               ))}
                           </Select>
                           <Button
                             variant="contained"
                             sx={{ width: "40px" }}
-                            onClick={() => handleHoursSave(assignment, index, idx)}
+                            onClick={() =>
+                              handleHoursSave(assignment, index, idx)
+                            }
                           >
                             Save
                           </Button>
-                          
                         </FormControl>
 
-                        
                         {/* <Button 
                             variant="contained"
                             sx={{ width: "40px"}}
@@ -336,10 +315,12 @@ const Schedule = () => {
                               Reset Hours
                           </Button> */}
 
-                        <Button variant="contained" sx={{ width: "40px"}} onClick={() => handleMoveClick(index, idx)}>
-                          MOVE
-                        </Button>
-
+                        <MoveAssignment
+                          scheduler={[...finalSchedule]}
+                          arrayIndex={index}
+                          dayIndex={idx}
+                          updateMovedFinalSchedule={updateMovedFinalSchedule}
+                        ></MoveAssignment>
                       </h2>
                       <div className="card-actions justify-end">
                         <div className="badge badge-outline text-white">
@@ -362,7 +343,6 @@ const Schedule = () => {
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
       />
-      <MoveAssignment show={showMoveModal} onClose={() => setShowMoveModal(false)} scheduler={[...finalSchedule]} arrayIndex={selectedIndices[0]} dayIndex={selectedIndices[1]} updateMovedFinalSchedule={updateMovedFinalSchedule}></MoveAssignment>
     </>
   );
 };
