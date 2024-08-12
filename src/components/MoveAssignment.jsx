@@ -19,10 +19,10 @@ const MoveAssignment = ({
   let insertIndex = null;
 
   const handleDateChange = (date) => {
-    const tempDate = date.format("YYYY/MM/DD")
-    const newDate = tempDate.replaceAll('/', '-');
+    const tempDate = date.format("YYYY/MM/DD");
+    const newDate = tempDate.replaceAll("/", "-");
     setSelectedDate(newDate);
-    console.log(selectedDate)
+    console.log(selectedDate);
   };
 
   function removeEmptyArrays(arrayOfArrays) {
@@ -34,7 +34,9 @@ const MoveAssignment = ({
   function reOrderAssignments(schedule) {
     return schedule.sort((a, b) => {
       if (a[0] && b[0]) {
-        return new Date(a[0].dateOfCompletion) - new Date(b[0].dateOfCompletion);
+        return (
+          new Date(a[0].dateOfCompletion) - new Date(b[0].dateOfCompletion)
+        );
       } else if (a[0]) {
         return -1;
       } else if (b[0]) {
@@ -49,8 +51,8 @@ const MoveAssignment = ({
 
   function moveItem() {
     //console.log(lastIndex);
-    tempSchedule = removeEmptyArrays(tempSchedule)
-    tempSchedule = reOrderAssignments(tempSchedule)
+    tempSchedule = removeEmptyArrays(tempSchedule);
+    tempSchedule = reOrderAssignments(tempSchedule);
 
     if (selectedDate) {
       for (let i = 0; i < tempSchedule.length; i++) {
@@ -72,7 +74,11 @@ const MoveAssignment = ({
       } else {
         tempSchedule = removeEmptyArrays(tempSchedule);
         //console.log("the lenght: ", tempSchedule.length);
-        console.log(tempSchedule[0][0].dateOfCompletion, selectedDate, tempSchedule[0][0].dateOfCompletion > selectedDate)
+        console.log(
+          tempSchedule[0][0].dateOfCompletion,
+          selectedDate,
+          tempSchedule[0][0].dateOfCompletion > selectedDate
+        );
         if (
           tempSchedule[0][0].dateOfCompletion > selectedDate &&
           tempSchedule[0][0].dateOfCompletion
@@ -120,7 +126,7 @@ const MoveAssignment = ({
       }
 
       tempSchedule = removeEmptyArrays(tempSchedule);
-      tempSchedule = reOrderAssignments(tempSchedule)
+      tempSchedule = reOrderAssignments(tempSchedule);
 
       updateMovedFinalSchedule(tempSchedule);
     }
@@ -128,9 +134,22 @@ const MoveAssignment = ({
     console.log(tempSchedule);
   }
   const confirm = (e) => {
-    //console.log(e);
-    message.success("Moved");
-    moveItem();
+    const [year, month, day] = selectedDate.split("-").map(Number);
+    const inputDate = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    console.log(inputDate);
+    console.log(inputDate >= tomorrow);
+    console.log(tomorrow);
+    if (inputDate >= tomorrow) {
+      message.success("Moved");
+      moveItem();
+    } else {
+      message.error("Move to a future date");
+    }
   };
   const cancel = (e) => {
     //console.log(e);
