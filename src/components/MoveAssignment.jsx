@@ -141,14 +141,15 @@ const MoveAssignment = ({
 
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    console.log(inputDate);
-    console.log(inputDate >= tomorrow);
-    console.log(tomorrow);
-    if (inputDate >= tomorrow) {
+    console.log();
+    if (
+      inputDate >= tomorrow &&
+      selectedDate != scheduler[arrayIndex][dayIndex].dateOfCompletion
+    ) {
       message.success("Moved");
       moveItem();
     } else {
-      message.error("Move to a future date");
+      message.error("Not a valid date");
     }
   };
   const cancel = (e) => {
