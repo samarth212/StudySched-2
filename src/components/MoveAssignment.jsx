@@ -19,20 +19,42 @@ const MoveAssignment = ({
   let insertIndex = null;
 
   const handleDateChange = (date) => {
-    setSelectedDate(date.format("YYYY/MM/DD"));
+    const tempDate = date.format("YYYY/MM/DD")
+    const newDate = tempDate.replaceAll('/', '-');
+    setSelectedDate(newDate);
+    console.log(selectedDate)
   };
 
   function removeEmptyArrays(arrayOfArrays) {
-    return arrayOfArrays.filter((innerArray) => innerArray.length > 0);
+    return arrayOfArrays
+      .map((innerArray) => innerArray.filter((item) => item !== undefined))
+      .filter((innerArray) => innerArray.length > 0);
+  }
+
+  function reOrderAssignments(schedule) {
+    return schedule.sort((a, b) => {
+      if (a[0] && b[0]) {
+        return new Date(a[0].dateOfCompletion) - new Date(b[0].dateOfCompletion);
+      } else if (a[0]) {
+        return -1;
+      } else if (b[0]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 
   let lastIndex = tempSchedule.length - 1;
 
   function moveItem() {
-    console.log(lastIndex);
+    //console.log(lastIndex);
+    tempSchedule = removeEmptyArrays(tempSchedule)
+    tempSchedule = reOrderAssignments(tempSchedule)
 
     if (selectedDate) {
       for (let i = 0; i < tempSchedule.length; i++) {
+        //console.log('temp:', tempSchedule)
         if (
           tempSchedule[i][0] &&
           tempSchedule[i][0].dateOfCompletion === selectedDate
@@ -49,8 +71,8 @@ const MoveAssignment = ({
         tempSchedule[arrayIndex].splice(dayIndex, 1);
       } else {
         tempSchedule = removeEmptyArrays(tempSchedule);
-        console.log("the lenght: ", tempSchedule.length);
-
+        //console.log("the lenght: ", tempSchedule.length);
+        console.log(tempSchedule[0][0].dateOfCompletion, selectedDate, tempSchedule[0][0].dateOfCompletion > selectedDate)
         if (
           tempSchedule[0][0].dateOfCompletion > selectedDate &&
           tempSchedule[0][0].dateOfCompletion
@@ -58,7 +80,7 @@ const MoveAssignment = ({
           let tempAssignment = { ...assignment };
           tempAssignment.dateOfCompletion = selectedDate;
           tempSchedule.unshift([tempAssignment]);
-          tempSchedule[arrayIndex].splice(dayIndex, 1);
+          tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
         } else if (
           tempSchedule[tempSchedule.length - 1][0].dateOfCompletion <
             selectedDate &&
@@ -75,6 +97,7 @@ const MoveAssignment = ({
 
           let indexToInsert = 0;
           for (let i = 0; i < tempSchedule.length; i++) {
+            //console.log('tempShcedule:', tempSchedule)
             if (
               tempSchedule[i][0] &&
               tempSchedule[i][0].dateOfCompletion > selectedDate
@@ -91,24 +114,26 @@ const MoveAssignment = ({
           if (indexToInsert < arrayIndex) {
             tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
           } else {
-            tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
+            tempSchedule[arrayIndex].splice(dayIndex, 1);
           }
         }
       }
 
       tempSchedule = removeEmptyArrays(tempSchedule);
+      tempSchedule = reOrderAssignments(tempSchedule)
+
       updateMovedFinalSchedule(tempSchedule);
     }
 
     console.log(tempSchedule);
   }
   const confirm = (e) => {
-    console.log(e);
+    //console.log(e);
     message.success("Moved");
     moveItem();
   };
   const cancel = (e) => {
-    console.log(e);
+    //console.log(e);
     message.error("Canceled");
   };
   return (
