@@ -15,7 +15,10 @@ const MoveAssignment = ({
   let tempSchedule = [...scheduler];
 
   let assignment = tempSchedule[arrayIndex][dayIndex];
+
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedHours, setSelectedHours] = useState(assignment.hoursSupposedtoWork);
+
   let insertIndex = null;
 
   const handleDateChange = (date) => {
@@ -69,16 +72,19 @@ const MoveAssignment = ({
       if (insertIndex || insertIndex === 0) {
         let tempAssignment = { ...assignment };
         tempAssignment.dateOfCompletion = selectedDate;
-        tempSchedule[insertIndex].push(tempAssignment);
-        tempSchedule[arrayIndex].splice(dayIndex, 1);
+        if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
+          tempAssignment.hoursSupposedtoWork = selectedHours
+          assignment.hoursSupposedtoWork -= selectedHours
+          tempSchedule[insertIndex].push(tempAssignment);
+        }
+        else{
+          tempSchedule[insertIndex].push(tempAssignment);
+          tempSchedule[arrayIndex].splice(dayIndex, 1);
+        }
+        
       } else {
         tempSchedule = removeEmptyArrays(tempSchedule);
         //console.log("the lenght: ", tempSchedule.length);
-        console.log(
-          tempSchedule[0][0].dateOfCompletion,
-          selectedDate,
-          tempSchedule[0][0].dateOfCompletion > selectedDate
-        );
         if (
           tempSchedule[0][0].dateOfCompletion > selectedDate &&
           tempSchedule[0][0].dateOfCompletion
@@ -94,8 +100,16 @@ const MoveAssignment = ({
         ) {
           let tempAssignment = { ...assignment };
           tempAssignment.dateOfCompletion = selectedDate;
-          tempSchedule.push([tempAssignment]);
-          tempSchedule[arrayIndex].splice(dayIndex, 1);
+          if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
+            tempAssignment.hoursSupposedtoWork = selectedHours
+            assignment.hoursSupposedtoWork -= selectedHours
+            tempSchedule.push([tempAssignment]);
+          }
+          else{
+            tempSchedule.push([tempAssignment]);
+            tempSchedule[arrayIndex].splice(dayIndex, 1);
+          }
+          
         } else {
           //5
           //[ 1, 2, 3, 4, 6, 7, 8, 9, 10 ]
@@ -116,12 +130,21 @@ const MoveAssignment = ({
           console.log("indextoinsert", indexToInsert);
           let tempAssignment = { ...assignment };
           tempAssignment.dateOfCompletion = selectedDate;
-          tempSchedule.splice(indexToInsert, 0, [tempAssignment]);
-          if (indexToInsert < arrayIndex) {
-            tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
-          } else {
-            tempSchedule[arrayIndex].splice(dayIndex, 1);
+          if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
+            tempAssignment.hoursSupposedtoWork = selectedHours
+            assignment.hoursSupposedtoWork -= selectedHours
+            tempSchedule.splice(indexToInsert, 0, [tempAssignment]);
           }
+          else{
+            tempSchedule.splice(indexToInsert, 0, [tempAssignment]);
+            if (indexToInsert < arrayIndex) {
+              tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
+            } else {
+              tempSchedule[arrayIndex].splice(dayIndex, 1);
+            }
+          }
+
+          
         }
       }
 
@@ -144,31 +167,47 @@ const MoveAssignment = ({
     console.log();
     if (
       inputDate >= tomorrow &&
-      selectedDate != scheduler[arrayIndex][dayIndex].dateOfCompletion
+      selectedDate != scheduler[arrayIndex][dayIndex].dateOfCompletion && selectedHours > 0 && selectedHours <= scheduler[arrayIndex][dayIndex].hoursSupposedtoWork
     ) {
       message.success("Moved");
       moveItem();
     } else {
-      message.error("Not a valid date");
+      message.error("Invalid date or hours");
     }
   };
   const cancel = (e) => {
     //console.log(e);
     message.error("Canceled");
   };
+
+  const handleHoursChange = (e) => {
+    setSelectedHours(e.target.value); 
+  }
+
   return (
+    
     <Popconfirm
       title="Move the assignment"
-      description={<DatePicker onChange={handleDateChange} />}
+      description={
+      <>
+        <DatePicker onChange={handleDateChange} />
+        <input type="number" className="bg-white border-2 border-black" value={selectedHours} onChange={handleHoursChange}/>
+      </>
+      }
       onConfirm={confirm}
       onCancel={cancel}
       okText="Move"
       cancelText="Cancel"
     >
-      <Button variant="contained" sx={{ width: "40px" }}>
-        MOVE
-      </Button>
+      <>
+        <Button variant="contained" sx={{ width: "40px" }}>
+          MOVE
+        </Button>
+        
+      </>
+      
     </Popconfirm>
+    
   );
 };
 
