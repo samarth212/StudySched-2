@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import Button from "@mui/material/Button";
 import { message, Popconfirm } from "antd";
 
+
 const MoveAssignment = ({
   show,
   onClose,
@@ -19,6 +20,7 @@ const MoveAssignment = ({
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedHours, setSelectedHours] = useState(assignment.hoursSupposedtoWork);
 
+  const maxHours = assignment.hoursSupposedtoWork
   let insertIndex = null;
 
   const handleDateChange = (date) => {
@@ -49,8 +51,6 @@ const MoveAssignment = ({
       }
     });
   }
-
-  let lastIndex = tempSchedule.length - 1;
 
   function moveItem() {
     //console.log(lastIndex);
@@ -162,11 +162,11 @@ const MoveAssignment = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    
+    //tomorrow.setDate(today.getDate() + 1);
     console.log();
     if (
-      inputDate >= tomorrow &&
+      inputDate >= today &&
       selectedDate != scheduler[arrayIndex][dayIndex].dateOfCompletion && selectedHours > 0 && selectedHours <= scheduler[arrayIndex][dayIndex].hoursSupposedtoWork
     ) {
       message.success("Moved");
@@ -185,13 +185,15 @@ const MoveAssignment = ({
   }
 
   return (
-    
-    <Popconfirm
+    <div className="mr-4">
+      <Popconfirm
       title="Move the assignment"
       description={
       <>
         <DatePicker onChange={handleDateChange} />
-        <input type="number" className="bg-white border-2 border-black" value={selectedHours} onChange={handleHoursChange}/>
+        {/* <input type="number" className="border-2 border-black bg-white" value={selectedHours} onChange={handleHoursChange} min="1"/> */}
+        <input type="number" min="1" max={maxHours} value={selectedHours} onChange={handleHoursChange} className="bg-transparent border border-gray-300 text-black text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block w-20 p-1.5 placeholder-gray-400 mt-2 focus:outline-none focus:ring-0 focus:border-blue-400" placeholder="Hours" required />
+
       </>
       }
       onConfirm={confirm}
@@ -207,6 +209,8 @@ const MoveAssignment = ({
       </>
       
     </Popconfirm>
+    </div>
+    
     
   );
 };
