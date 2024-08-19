@@ -62,6 +62,7 @@ export default function updateAssignment( scheduler, arrayIndex=0, dayIndex=0, h
 
         if(isLastAssignment){
             newTask.hoursSupposedtoWork = hoursToAdd
+            newTask.hoursWorked = 0
             const date = addOneDay(newTask.dateOfCompletion)
             console.log('date', date)
             newTask.dateOfCompletion = date

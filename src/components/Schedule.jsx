@@ -115,6 +115,8 @@ const Schedule = () => {
     };
 
     updateScheduler();
+
+    console.log(finalSchedule)
   }, [finalSchedule]);
 
   useEffect(() => {
