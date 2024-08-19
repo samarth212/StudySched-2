@@ -229,9 +229,6 @@ const Schedule = () => {
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
-        <p style={{ color: "red", fontSize: "24px" }}>
-          red = that day is backed up
-        </p>
         <div className="flex flex-col overflow-y-auto">
           {finalSchedule.map((day, index) => {
 
@@ -263,7 +260,7 @@ const Schedule = () => {
                   
                   title='Warning' 
                   description={<p>
-                    {`The workload for this day exceeds your daily study time by ${difference} hour(s).`}
+                    {`The workload for this day exceeds your daily study time by ${difference} ${difference === 1 ? 'hour' : 'hours'}.`}
                     <br />
                     {`Consider moving assignments to clear up your schedule.`}
                   </p>}
