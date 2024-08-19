@@ -57,6 +57,8 @@ const MoveAssignment = ({
     tempSchedule = removeEmptyArrays(tempSchedule);
     tempSchedule = reOrderAssignments(tempSchedule);
 
+    let itemExists = false
+
     if (selectedDate) {
       for (let i = 0; i < tempSchedule.length; i++) {
         //console.log('temp:', tempSchedule)
@@ -69,18 +71,48 @@ const MoveAssignment = ({
           break;
         }
       }
+
+      
+
+
       if (insertIndex || insertIndex === 0) {
-        let tempAssignment = { ...assignment };
-        tempAssignment.dateOfCompletion = selectedDate;
-        if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
-          tempAssignment.hoursSupposedtoWork = selectedHours
-          assignment.hoursSupposedtoWork -= selectedHours
-          tempSchedule[insertIndex].push(tempAssignment);
+
+        for(let j=0; j<tempSchedule[insertIndex].length; j++){
+          if(tempSchedule[insertIndex][j].name === assignment.name){
+
+            console.log('name')
+            if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
+              let tempHours = Number(tempSchedule[insertIndex][j].hoursSupposedtoWork)
+              tempHours += Number(selectedHours)
+              tempSchedule[insertIndex][j].hoursSupposedtoWork = tempHours
+              assignment.hoursSupposedtoWork -= selectedHours
+            }
+            else{
+              let tempHours = Number(tempSchedule[insertIndex][j].hoursSupposedtoWork)
+              tempHours += Number(selectedHours)
+              tempSchedule[insertIndex][j].hoursSupposedtoWork = tempHours
+              tempSchedule[arrayIndex].splice(dayIndex, 1);
+            }
+            
+            itemExists = true
+            break;
+          }
         }
-        else{
-          tempSchedule[insertIndex].push(tempAssignment);
-          tempSchedule[arrayIndex].splice(dayIndex, 1);
+
+        if(!itemExists){
+          let tempAssignment = { ...assignment };
+          tempAssignment.dateOfCompletion = selectedDate;
+          if(selectedHours && selectedHours != assignment.hoursSupposedtoWork){
+            tempAssignment.hoursSupposedtoWork = selectedHours
+            assignment.hoursSupposedtoWork -= selectedHours
+            tempSchedule[insertIndex].push(tempAssignment);
+          }
+          else{
+            tempSchedule[insertIndex].push(tempAssignment);
+            tempSchedule[arrayIndex].splice(dayIndex, 1);
+          }
         }
+        
         
       } else {
         tempSchedule = removeEmptyArrays(tempSchedule);
