@@ -225,6 +225,11 @@ const Schedule = () => {
     setShowMoveModal(true);
   };
 
+  const handleAssignmentClick = (assignment) => {
+    setSelectedAssignment(assignment)
+    setShowModal(true)
+  }
+
 
   return (
     <>
@@ -296,9 +301,11 @@ const Schedule = () => {
                           : assignment.isBackedUp
                           ? "card shadow-lg bg-slate-500 flex-1"
                           : "card shadow-lg bg-slate-500 flex-1"
+                        
                       }
+                      onClick={() => handleAssignmentClick(assignment)}
                     >
-                      <div className="card-body">
+                      <div className="card-body" >
                         <h2 className="card-title text-white">
                           {assignment.name.length < 29
                             ? assignment.name
