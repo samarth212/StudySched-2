@@ -19,6 +19,10 @@ import shiftAssignments from "../helper/shiftAssignments";
 import resetAssignment from "../helper/resetAssignment";
 import MoveAssignment from "./MoveAssignment";
 
+import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
+import { message, Popconfirm } from "antd";
+
+
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -219,6 +223,7 @@ const Schedule = () => {
     setShowMoveModal(true);
   };
 
+
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
@@ -228,117 +233,149 @@ const Schedule = () => {
           red = that day is backed up
         </p>
         <div className="flex flex-col overflow-y-auto">
-          {finalSchedule.map((day, index) => (
-            <div key={index} className="flex-col items-center mb-4 mt-12">
-              <p className="text-xl font-semibold">
-                {formatDate(day[0]?.dateOfCompletion.toString())}
-              </p>
-              {day.map((assignment, idx) => (
-                <div
-                  key={idx}
-                  className={
-                    assignment.hoursWorked >= assignment.hoursSupposedtoWork
-                      ? "flex items-center mt-4 opacity-50 mb-6 mt-4"
-                      : "flex items-center mb-6 mt-4"
-                  }
+          {finalSchedule.map((day, index) => {
 
-                  //onClick={() => handleAssignmentClick(assignment)}
+            const totalHoursSupposedToWork = day.reduce(
+              (sum, assignment) => sum + parseInt(assignment.hoursSupposedtoWork, 10),
+              0
+            );
+  
+            
+            const threshold = availableHours; 
+            const difference = totalHoursSupposedToWork - threshold
+            let titleColor = "black";
+            if (difference > 2) {
+              titleColor = "red";
+            } else if (difference === 1 || difference === 2) {
+              titleColor = "orange";
+            }
+  
+            return (
+              <div key={index} className="flex-col items-center mb-4 mt-12">
+                <p
+                  className="text-xl font-semibold"
+                  // style={{
+                  //   color: totalHoursSupposedToWork > threshold ? "red" : "black",
+                  // }}
                 >
+
+                  <Popconfirm 
+                  
+                  title='Warning' 
+                  description={<p>
+                    {`The workload for this day exceeds your daily study time by ${difference} hour(s).`}
+                    <br />
+                    {`Consider moving assignments to clear up your schedule.`}
+                  </p>}
+                  okText='Ok'
+                  
+                  
+    
+                  >
+                    <AssignmentLateIcon sx={{display: totalHoursSupposedToWork > threshold ? 'inline': 'none', color: titleColor, fontSize:"35px", marginRight:"18px", cursor:"pointer"}}></AssignmentLateIcon>
+
+                  </Popconfirm>
+                  
+
+                  
+                  {formatDate(day[0]?.dateOfCompletion.toString())}
+                  
+                </p>
+                {day.map((assignment, idx) => (
                   <div
+                    key={idx}
                     className={
                       assignment.hoursWorked >= assignment.hoursSupposedtoWork
-                        ? "card shadow-lg bg-green-600 flex-1"
-                        : assignment.isBackedUp
-                        ? "card shadow-lg bg-slate-500 flex-1"
-                        : "card shadow-lg bg-slate-500 flex-1"
+                        ? "flex items-center mt-4 opacity-50 mb-6 mt-4"
+                        : "flex items-center mb-6 mt-4"
                     }
                   >
-                    <div className="card-body">
-                      <h2 className="card-title text-white">
-                        {assignment.name.length < 29
-                          ? assignment.name
-                          : assignment.name.substring(0, 22).concat("...")}
-                        <div className="badge badge-secondary text-white ml-2 w-22">
-                          {assignment.hoursSupposedtoWork} Hours
-                        </div>
-                        <FormControl
-                          fullWidth
-                          variant="filled"
-                          sx={{
-                            display: assignment.isHoursSaved ? "none" : "flex",
-                          }}
-                        >
-                          <InputLabel id="demo-simple-select-label">
-                            Hours Worked
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Hours Worked"
-                            type="number"
-                            sx={{ width: "120px" }}
-                            defaultValue={""}
-                            onChange={(e) =>
-                              handleHoursWorkedChange(
-                                e.target.value,
-                                assignment
-                              )
-                            }
+                    <div
+                      className={
+                        assignment.hoursWorked >= assignment.hoursSupposedtoWork
+                          ? "card shadow-lg bg-green-600 flex-1"
+                          : assignment.isBackedUp
+                          ? "card shadow-lg bg-slate-500 flex-1"
+                          : "card shadow-lg bg-slate-500 flex-1"
+                      }
+                    >
+                      <div className="card-body">
+                        <h2 className="card-title text-white">
+                          {assignment.name.length < 29
+                            ? assignment.name
+                            : assignment.name.substring(0, 22).concat("...")}
+                          <div className="badge badge-secondary text-white ml-2 w-22">
+                            {assignment.hoursSupposedtoWork} Hours
+                          </div>
+                          <FormControl
+                            fullWidth
+                            variant="filled"
+                            sx={{
+                              display: assignment.isHoursSaved ? "none" : "flex",
+                            }}
                           >
-                            {[
-                              ...Array(
-                                assignment.assignment.hoursRequired + 1
-                              ).keys(),
-                            ]
-                              .map((i) => i)
-                              .map((hour) => (
-                                <MenuItem key={Math.random()} value={hour}>
-                                  {hour}{" "}
-                                </MenuItem>
-                              ))}
-                          </Select>
-                          <Button
-                            variant="contained"
-                            sx={{ width: "40px" }}
-                            onClick={() =>
-                              handleHoursSave(assignment, index, idx)
-                            }
-                          >
-                            Save
-                          </Button>
-
-                          <MoveAssignment
-                          scheduler={[...finalSchedule]}
-                          arrayIndex={index}
-                          dayIndex={idx}
-                          updateMovedFinalSchedule={updateMovedFinalSchedule}
-                        ></MoveAssignment>
-                        
-                        </FormControl>
-
-                        {/* <Button 
-                            variant="contained"
-                            sx={{ width: "40px"}}
-                            onClick={() => handleAssignmentReset([...finalSchedule], index, idx)}>
-                              Reset Hours
-                          </Button> */}
-
-                        
-                      </h2>
-                      <div className="card-actions justify-end">
-                        <div className="badge badge-outline text-white">
-                          Due: {assignment.assignment.dueDate}
-                        </div>
-                        <div className="badge badge-outline text-white">
-                          Assignment
+                            <InputLabel id="demo-simple-select-label">
+                              Hours Worked
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              label="Hours Worked"
+                              type="number"
+                              sx={{ width: "120px" }}
+                              defaultValue={""}
+                              onChange={(e) =>
+                                handleHoursWorkedChange(
+                                  e.target.value,
+                                  assignment
+                                )
+                              }
+                            >
+                              {[
+                                ...Array(
+                                  assignment.assignment.hoursRequired + 1
+                                ).keys(),
+                              ]
+                                .map((i) => i)
+                                .map((hour) => (
+                                  <MenuItem key={Math.random()} value={hour}>
+                                    {hour}{" "}
+                                  </MenuItem>
+                                ))}
+                            </Select>
+                            <Button
+                              variant="contained"
+                              sx={{ width: "40px" }}
+                              onClick={() =>
+                                handleHoursSave(assignment, index, idx)
+                              }
+                            >
+                              Save
+                            </Button>
+  
+                            <MoveAssignment
+                              scheduler={[...finalSchedule]}
+                              arrayIndex={index}
+                              dayIndex={idx}
+                              updateMovedFinalSchedule={updateMovedFinalSchedule}
+                            ></MoveAssignment>
+                          </FormControl>
+                        </h2>
+                        <div className="card-actions justify-end">
+                          <div className="badge badge-outline text-white">
+                            Due: {assignment.assignment.dueDate}
+                          </div>
+                          <div className="badge badge-outline text-white">
+                            Assignment
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ))}
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
       <Modal
@@ -348,6 +385,7 @@ const Schedule = () => {
       />
     </>
   );
+  
 };
 
 export default Schedule;
