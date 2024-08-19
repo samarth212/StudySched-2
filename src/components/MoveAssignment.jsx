@@ -136,10 +136,11 @@ const MoveAssignment = ({
             tempSchedule.splice(indexToInsert, 0, [tempAssignment]);
           }
           else{
+            console.log('reached here')
             tempSchedule.splice(indexToInsert, 0, [tempAssignment]);
-            if (indexToInsert < arrayIndex) {
+            if (indexToInsert <= arrayIndex) {
               tempSchedule[arrayIndex + 1].splice(dayIndex, 1);
-            } else {
+            } else if(indexToInsert > arrayIndex) {
               tempSchedule[arrayIndex].splice(dayIndex, 1);
             }
           }
@@ -192,7 +193,7 @@ const MoveAssignment = ({
       <>
         <DatePicker onChange={handleDateChange} />
         {/* <input type="number" className="border-2 border-black bg-white" value={selectedHours} onChange={handleHoursChange} min="1"/> */}
-        <input type="number" min="1" max={maxHours} value={selectedHours} onChange={handleHoursChange} className="bg-transparent border border-gray-300 text-black text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block w-20 p-1.5 placeholder-gray-400 mt-2 focus:outline-none focus:ring-0 focus:border-blue-400" placeholder="Hours" required />
+        <input type="number" min={1} max={maxHours} value={selectedHours} onChange={handleHoursChange} className="bg-transparent border border-gray-300 text-black text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block w-20 p-1.5 placeholder-gray-400 mt-2 focus:outline-none focus:ring-0 focus:border-blue-400" placeholder="Hours" required />
 
       </>
       }

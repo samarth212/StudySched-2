@@ -249,7 +249,7 @@ const Schedule = () => {
                       assignment.hoursWorked >= assignment.hoursSupposedtoWork
                         ? "card shadow-lg bg-green-600 flex-1"
                         : assignment.isBackedUp
-                        ? "card shadow-lg bg-red-500 flex-1"
+                        ? "card shadow-lg bg-slate-500 flex-1"
                         : "card shadow-lg bg-slate-500 flex-1"
                     }
                   >
@@ -306,6 +306,14 @@ const Schedule = () => {
                           >
                             Save
                           </Button>
+
+                          <MoveAssignment
+                          scheduler={[...finalSchedule]}
+                          arrayIndex={index}
+                          dayIndex={idx}
+                          updateMovedFinalSchedule={updateMovedFinalSchedule}
+                        ></MoveAssignment>
+                        
                         </FormControl>
 
                         {/* <Button 
@@ -315,12 +323,7 @@ const Schedule = () => {
                               Reset Hours
                           </Button> */}
 
-                        <MoveAssignment
-                          scheduler={[...finalSchedule]}
-                          arrayIndex={index}
-                          dayIndex={idx}
-                          updateMovedFinalSchedule={updateMovedFinalSchedule}
-                        ></MoveAssignment>
+                        
                       </h2>
                       <div className="card-actions justify-end">
                         <div className="badge badge-outline text-white">
