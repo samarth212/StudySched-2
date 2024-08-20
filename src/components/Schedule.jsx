@@ -20,8 +20,9 @@ import resetAssignment from "../helper/resetAssignment";
 import MoveAssignment from "./MoveAssignment";
 
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
+import InfoIcon from '@mui/icons-material/Info';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { message, Popconfirm } from "antd";
-
 
 const Schedule = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
@@ -303,7 +304,7 @@ const Schedule = () => {
                           : "card shadow-lg bg-slate-500 flex-1"
                         
                       }
-                      onClick={() => handleAssignmentClick(assignment)}
+                      
                     >
                       <div className="card-body" >
                         <h2 className="card-title text-white">
@@ -366,6 +367,7 @@ const Schedule = () => {
                               updateMovedFinalSchedule={updateMovedFinalSchedule}
                             ></MoveAssignment>
                           </FormControl>
+                          <InfoIcon onClick={() => handleAssignmentClick(assignment)} className="text-white hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 " sx={{fontSize:"40px", cursor:"pointer"}}></InfoIcon>
                         </h2>
                         <div className="card-actions justify-end">
                           <div className="badge badge-outline text-white">
