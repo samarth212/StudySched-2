@@ -22,6 +22,9 @@ import MoveAssignment from "./MoveAssignment";
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import InfoIcon from '@mui/icons-material/Info';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
 import { message, Popconfirm } from "antd";
 
 const Schedule = () => {
@@ -232,6 +235,15 @@ const Schedule = () => {
   }
 
 
+  const handleDelete = (schedule, arrayIndex, dayIndex) =>{
+    schedule[arrayIndex].splice(dayIndex, 1)
+    schedule = schedule.filter(item => item !== undefined && item.length !== 0);
+    console.log('deleted', schedule)
+    setFinalSchedule(schedule)
+    message.success('Item Deleted')
+  }
+
+
   return (
     <>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
@@ -368,6 +380,19 @@ const Schedule = () => {
                             ></MoveAssignment>
                           </FormControl>
                           <InfoIcon onClick={() => handleAssignmentClick(assignment)} className="text-white hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 " sx={{fontSize:"40px", cursor:"pointer"}}></InfoIcon>
+
+                          <Popconfirm
+                            title={`Delete ${assignment.name} at ${assignment.dateOfCompletion}?`}
+                            description='This action can not be undone.'
+                            okText='Delete'
+                            cancelText='Cancel'
+                            onConfirm={() => handleDelete([...finalSchedule], index, idx)}
+                            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                          >
+
+                            <DeleteIcon className="text-red-500 hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 " sx={{fontSize:"40px", cursor:"pointer"}}></DeleteIcon>
+                          </Popconfirm>
+                          
                         </h2>
                         <div className="card-actions justify-end">
                           <div className="badge badge-outline text-white">
