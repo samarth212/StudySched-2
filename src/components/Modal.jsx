@@ -11,6 +11,16 @@ const Modal = ({ show, onClose, assignment }) => {
     return match ? match[0] : null;
   }
 
+  function extractDescription(text) {
+    const linkStartIndex = text.indexOf('- Link: ');
+  
+    if (linkStartIndex !== -1) {
+      return text.slice(0, linkStartIndex).trim();
+    }
+  
+    return text.trim();
+  }
+
   const submissionLink = extractSubmissionLink(assignment.assignment.description)
 
   return (
@@ -29,7 +39,7 @@ const Modal = ({ show, onClose, assignment }) => {
                 <div className="mt-2">
                   
                   <p className="text-sm text-gray-500 mt-2">
-                    Description: {assignment.assignment.description}
+                    Description: {extractDescription(assignment.assignment.description)}
                   </p>
                   <p className="text-sm text-gray-500 mt-2">
                     Start Date: {assignment.assignment.startDate}
