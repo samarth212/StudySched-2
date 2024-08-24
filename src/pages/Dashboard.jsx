@@ -10,7 +10,7 @@ const Dashboard = () => {
   return (
     <div className="pl-64">
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <AddAssignment></AddAssignment>
+      
       <div className="flex gap-4">
         <div className="bg-white shadow-lg p-4 rounded-lg mb-12 w-1/6">
           <h2 className="text-2xl font-bold text-center  ">Priority</h2>

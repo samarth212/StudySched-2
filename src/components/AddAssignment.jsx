@@ -16,13 +16,17 @@ const actions = [
   { icon: <CalendarMonthIcon />, name: "Add Event" },
   { icon: <AssignmentIcon />, name: "Add Assignment" },
 ];
-const AddAssignment = () => {
+const AddAssignment = ({updateMovedFinalSchedule,}) => {
   const [assignmentName, setAssignmentName] = useState("");
-  const [date, setDate] = useState(dayjs());
+  const [endDate, setEndDate] = useState(dayjs());
+  const [startDate, setStartDate] = useState(dayjs());
   const [hours, setHours] = useState(5);
   const [desc, setDesc] = useState("");
   const [name, setName] = useState("");
   const [assignments, setAssignments] = useState([]);
+  const [schedule, setSchedule] = useState([])
+  let newAssignment = {}
+
   useEffect(() => {
     const fetchData = async () => {
       const db = getDatabase(app);
@@ -34,16 +38,117 @@ const AddAssignment = () => {
 
       if (snapshot.exists()) {
         setAssignments(snapshot.val().assignments);
+        setSchedule(snapshot.val().scheduler)
+
       } else {
       }
     };
 
     fetchData();
-  }, []);
+  });
+
+
   const speedDialHandler = (name) => () => {
     setAssignmentName(name);
     document.getElementById("my_modal_1").showModal();
   };
+
+  function allocateAssignment(tempSchedule, assignment){
+
+    console.log(assignment.hoursRequired)
+
+    let totalHoursAllocated = 0
+    const tempAssignment = {assignment: {...assignment}, ...assignment}
+    tempAssignment.totalNeeded = tempAssignment.assignment.hoursRequired
+    let dayDate = null
+
+    while(totalHoursAllocated < assignment.hoursRequired){
+
+      for(let i=0; i<tempSchedule.length; i++){
+        dayDate = tempSchedule[i][0].dateOfCompletion
+        console.log(dayDate, startDate.format("YYYY-MM-DD"))
+        if(dayDate >= startDate.format("YYYY-MM-DD")){
+          console.log('insert here')
+          tempAssignment.hoursSupposedtoWork = 1
+          tempAssignment.dateOfCompletion = dayDate
+          if(dayDate === endDate.format("YYYY-MM-DD")){
+            let remainingHours = assignment.hoursRequired - totalHoursAllocated
+            tempAssignment.hoursSupposedtoWork = remainingHours
+            totalHoursAllocated += remainingHours
+            console.log('this day adds', remainingHours)
+            tempSchedule[i].push({...tempAssignment})
+            break;
+          }
+          tempSchedule[i].push({...tempAssignment})
+          totalHoursAllocated++;
+        }
+      };
+      console.log('test', endDate.format("YYYY-MM-DD"), dayDate)
+
+      if(endDate.format("YYYY-MM-DD") > dayDate && endDate.format("YYYY-MM-DD") > tempSchedule[tempSchedule.length-1][0].dateOfCompletion){
+        while(totalHoursAllocated < assignment.hoursRequired && dayDate < endDate.format("YYYY-MM-DD")){
+          //console.log(dayDate, addOneDay(dayDate))
+          dayDate = addOneDay(dayDate)
+
+          console.log('push new day')
+          tempAssignment.dateOfCompletion = dayDate
+          tempAssignment.hoursSupposedtoWork = 1
+          
+          if(dayDate === endDate.format("YYYY-MM-DD")){
+            let remainingHours = assignment.hoursRequired - totalHoursAllocated
+            tempAssignment.hoursSupposedtoWork = remainingHours
+            totalHoursAllocated += remainingHours
+            console.log('this day adds', remainingHours)
+          }
+
+          tempSchedule.push([{...tempAssignment}])
+          totalHoursAllocated++;
+        }
+        
+      }
+
+    }
+
+    console.log(tempSchedule);
+    return tempSchedule;
+
+    
+    
+  };
+
+  function addOneDay(dateString) {
+    // const date = new Date(dateString); 
+    // date.setDate(date.getDate() + 1);
+    // date.setHours(0, 0, 0, 0);
+    // date = date.toISOString().split['T'][0]
+    // return date
+
+    
+    let date = new Date(dateString); // Convert string to Date object
+    date.setDate(date.getDate() + 2); // Add one day
+    date.setHours(0, 0, 0, 0);
+    date = date.toISOString().split('T')[0]
+    return date
+    
+
+  }
+
+  function daysBetween(startDate, endDate) {
+    const start = new Date(startDate); // Convert startDate string to Date object
+    const end = new Date(endDate); // Convert endDate string to Date object
+    const diffTime = Math.abs(end - start); // Difference in milliseconds
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+    return diffDays;
+  }
+
+
+
+
+
+
+
+
+
   const handleSubmit = () => {
     const nowDate = new Date();
 
@@ -53,20 +158,30 @@ const AddAssignment = () => {
       day: "2-digit",
       timeZone: "America/New_York",
     };
-    const local = new Intl.DateTimeFormat("en-CA", options).format(nowDate);
-    console.log(local);
+
+    newAssignment = {
+      name,
+      description: desc,
+      startDate: startDate.format("YYYY-MM-DD"),
+      dueDate: endDate.format("YYYY-MM-DD"),
+      hoursRequired: hours,
+      hoursSupposedtoWork: 0,
+      hoursWorked: 0,
+      isAdded: true,
+    }
+    
+
     const newAssignments = [
       ...assignments,
-      {
-        name,
-        description: desc,
-        startDate: local,
-        dueDate: date.format("YYYY-MM-DD"),
-        hoursRequired: hours,
-        hoursSupposedtoWork: 0,
-        hoursWorked: 0,
-      },
+      newAssignment,
     ];
+
+    console.log('testing', schedule, newAssignment)
+    if(schedule && newAssignment){
+      const tempSchedule = allocateAssignment([...schedule], {...newAssignment})
+      updateMovedFinalSchedule(tempSchedule)
+    }
+    
 
     const db = getDatabase(app);
     if (assignmentName.split(" ")[1] == "Event") {
@@ -99,9 +214,26 @@ const AddAssignment = () => {
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(newValue) => {
+                if (newValue && newValue.target) {
+                  setStartDate(newValue.target.value);
+                } else {
+                  setStartDate(newValue);
+                }
+              }}
+              />
+            <DatePicker
               label="Due Date"
-              value={date}
-              onChange={(newValue) => setDate(newValue.target.value)}
+              value={endDate}
+              onChange={(newValue) => {
+                if (newValue && newValue.target) {
+                  setEndDate(newValue.target.value);
+                } else {
+                  setEndDate(newValue);
+                }
+              }}
             />
           </LocalizationProvider>
           <TextField
@@ -118,7 +250,7 @@ const AddAssignment = () => {
             shiftStep={1}
             step={1}
             marks
-            onChange={(e) => setHours(e)}
+            onChange={(e) => setHours(e.target.value)}
             min={1}
             max={10}
           ></Slider>

@@ -18,6 +18,7 @@ import { unstable_useViewTransitionState } from "react-router-dom";
 import shiftAssignments from "../helper/shiftAssignments";
 import resetAssignment from "../helper/resetAssignment";
 import MoveAssignment from "./MoveAssignment";
+import AddAssignment from "./AddAssignment";
 
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import InfoIcon from '@mui/icons-material/Info';
@@ -246,6 +247,7 @@ const Schedule = () => {
 
   return (
     <>
+    <AddAssignment updateMovedFinalSchedule={updateMovedFinalSchedule}></AddAssignment>
       <div className="bg-slate-200 shadow-lg p-4 rounded-l mb-12 w-5/10 overflow-y-scroll h-screen">
         <h2 className="text-2xl font-bold text-center">Study Schedule</h2>
         <p className="text-center">View your study schedule</p>
