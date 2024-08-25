@@ -121,5 +121,12 @@ export default function sortAssignments(
   //   }
   // }
 
+  scheduler = removeEmptyArrays(scheduler);
   return scheduler;
+}
+
+function removeEmptyArrays(arrayOfArrays) {
+  return arrayOfArrays
+    .map((innerArray) => innerArray.filter((item) => item !== undefined))
+    .filter((innerArray) => innerArray.length > 0);
 }
