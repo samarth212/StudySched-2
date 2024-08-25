@@ -24,6 +24,7 @@ const AddAssignment = ({updateMovedFinalSchedule,}) => {
   const [desc, setDesc] = useState("");
   const [name, setName] = useState("");
   const [assignments, setAssignments] = useState([]);
+  const [events, setEvents] = useState([]);
   const [schedule, setSchedule] = useState([])
   let newAssignment = {}
 
@@ -38,6 +39,7 @@ const AddAssignment = ({updateMovedFinalSchedule,}) => {
 
       if (snapshot.exists()) {
         setAssignments(snapshot.val().assignments);
+        setEvents(snapshot.val().events)
         setSchedule(snapshot.val().scheduler)
 
       } else {
@@ -176,8 +178,13 @@ const AddAssignment = ({updateMovedFinalSchedule,}) => {
       newAssignment,
     ];
 
+    const newEvents = [
+      ...events,
+      newAssignment,
+    ]
+
     console.log('testing', schedule, newAssignment)
-    if(schedule && newAssignment){
+    if(schedule && newAssignment && assignmentName.split(" ")[1] == "Assignment"){
       const tempSchedule = allocateAssignment([...schedule], {...newAssignment})
       updateMovedFinalSchedule(tempSchedule)
     }
@@ -186,7 +193,7 @@ const AddAssignment = ({updateMovedFinalSchedule,}) => {
     const db = getDatabase(app);
     if (assignmentName.split(" ")[1] == "Event") {
       update(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
-        events: newAssignments,
+        events: newEvents,
       });
     } else {
       update(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
@@ -194,6 +201,8 @@ const AddAssignment = ({updateMovedFinalSchedule,}) => {
       });
     }
   };
+
+
   return (
     <>
       <dialog
