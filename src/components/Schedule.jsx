@@ -4,6 +4,7 @@ import { getDatabase, ref, get, update, set } from "firebase/database";
 import { app } from "../auth/firebase";
 import Modal from "./Modal";
 import * as React from "react";
+import dayjs from "dayjs";
 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -28,7 +29,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import { message, Popconfirm } from "antd";
 
-const Schedule = () => {
+const Schedule = ({selectedCalendarDate}) => {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showMoveModal, setShowMoveModal] = useState(false);
@@ -37,7 +38,7 @@ const Schedule = () => {
   const [assignments, setAssignments] = useState(false);
   const [newHours, setNewHours] = useState([]);
   const [selectedIndices, setSelectedIndices] = useState([null, null]);
-
+  const dayRefs = useRef([]);
   /*
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +64,22 @@ const Schedule = () => {
 
   }, []);
   */
+
+  useEffect(() => {
+    console.log(selectedCalendarDate.format('YYYY-MM-DD'))
+  }, [selectedCalendarDate])
+
+  useEffect(() => {
+    if (selectedCalendarDate) {
+      const matchedIndex = finalSchedule.findIndex(day =>
+        dayjs(day[0]?.dateOfCompletion).isSame(dayjs(selectedCalendarDate), 'day')
+      );
+      if (matchedIndex !== -1 && dayRefs.current[matchedIndex]) {
+        dayRefs.current[matchedIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.scrollBy(0, -50);
+      }
+    }
+  }, [selectedCalendarDate, finalSchedule]);
 
   const [sort, setSort] = useState(true);
 
@@ -270,7 +287,7 @@ const Schedule = () => {
             }
   
             return (
-              <div key={index} className="flex-col items-center mb-4 mt-12">
+              <div key={index} className="flex-col items-center mb-4 mt-12" ref={el => dayRefs.current[index] = el}>
                 <p
                   className="text-xl font-semibold"
                   // style={{

@@ -1,12 +1,17 @@
 import React from "react";
 import PieActiveArc from "../components/PieChart";
-
+import dayjs from "dayjs";
+import { useState} from "react";
 import DateCalendarValue from "../components/Calendar";
 import AddAssignment from "../components/AddAssignment";
 import Todo from "../components/Todo";
 import Schedule from "../components/Schedule.jsx";
 
 const Dashboard = () => {
+
+
+  const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
+
   return (
     <div className="pl-64">
       {/* Open the modal using document.getElementById('ID').showModal() method */}
@@ -21,10 +26,10 @@ const Dashboard = () => {
         </div>
         {/* Start of Second Column */}
         <div className="h-screen flex flex-col justify-around w-2/5">
-          <div className="bg-white shadow-lg rounded-lg h-2/5 ">
-            <DateCalendarValue></DateCalendarValue>
+          <div className="bg-white shadow-lg rounded-lg h-2/5 mb-0">
+            <DateCalendarValue value={selectedDate} setValue={setSelectedDate}></DateCalendarValue>
           </div>
-          <div className="flex items-center h-screen justify-around">
+          <div className="flex items-center h-screen justify-around mt-0">
             <div className="bg-white shadow-lg p-4 rounded-lg h-5/6 mb-8 w-1/2 ">
               <h2 className="text-2xl font-bold text-center  ">Analytics</h2>
               <p className="text-center">Track your Habits</p>
@@ -39,7 +44,7 @@ const Dashboard = () => {
             <Todo></Todo>
           </div>
         </div>
-        <Schedule />
+        <Schedule selectedCalendarDate={selectedDate} />
       </div>
     </div>
   );
