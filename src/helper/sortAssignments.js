@@ -6,7 +6,11 @@ export default function sortAssignments(
   availableHours,
   startDate = new Date()
 ) {
-  const tempArray = [...unsortedAssignments];
+  let tempArray = [...unsortedAssignments];
+
+  const today = new Date()
+  //tempArray = tempArray.filter(assignment => new Date(assignment.dueDate) >= today)
+  
 
   tempArray.sort((a, b) => {
     const dateA = new Date(a.dueDate);

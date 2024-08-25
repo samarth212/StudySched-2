@@ -11,6 +11,8 @@ const Tutorial = ({
   savedVal,
   handleSave,
 }) => {
+
+  const today = new Date()
   return (
     <div className="flex justify-center flex-col items-center h-screen w-screen">
       <div className="card bg-slate-200 shadow-xl p-16">
@@ -23,7 +25,7 @@ const Tutorial = ({
           <Step2
             setStep={setStep}
             step={step}
-            assignments={assignments}
+            assignments={assignments.filter(assignment => new Date(assignment.dueDate) >= today)}
             setAssignments={setAssignments}
             savedVal={savedVal}
           ></Step2>
