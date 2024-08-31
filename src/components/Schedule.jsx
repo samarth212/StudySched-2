@@ -20,6 +20,7 @@ import shiftAssignments from "../helper/shiftAssignments";
 import resetAssignment from "../helper/resetAssignment";
 import MoveAssignment from "./MoveAssignment";
 import AddAssignment from "./AddAssignment";
+import NewAssignments from "./NewAssignments";
 
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import InfoIcon from '@mui/icons-material/Info';
@@ -43,6 +44,7 @@ const Schedule = ({selectedCalendarDate}) => {
   const [selectedIndices, setSelectedIndices] = useState([null, null]);
   const [calendarUrl, setCalendarUrl] = useState(null)
   const dayRefs = useRef([]);
+  const [showNewAssignments, setShowNewAssignments] = useState(false)
   /*
   useEffect(() => {
     const fetchData = async () => {
@@ -268,13 +270,20 @@ const Schedule = ({selectedCalendarDate}) => {
   }
 
   const [newAssignments, setNewAssignments] = useState([])
+  const [newEvents, setNewEvents] = useState([])
+
 
   useEffect(() => {
 
     
     if(assignments && events){
       console.log('FETCHING....')
-      fetchNewAssignments(calendarUrl, [...assignments], [...events])
+      const newData = fetchNewAssignments(calendarUrl, [...assignments], [...events])
+      setNewAssignments(newData[0])
+      setNewEvents(newData[1])
+      if(newData[0] && newData[0][0]){
+        setShowNewAssignments(true)
+      }
     }
     
   } , [assignments, events])
@@ -453,6 +462,8 @@ const Schedule = ({selectedCalendarDate}) => {
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
       />
+      <NewAssignments show={showNewAssignments} onClose={() => setShowNewAssignments(false)}></NewAssignments>
+      
     </>
   );
   

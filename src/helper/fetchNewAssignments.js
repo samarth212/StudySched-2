@@ -86,4 +86,5 @@ export default async function fetchNewAssignments(url, currentAssignments = [], 
   
 
   update(dbRef, {assignments: assignments});
+  return [[...newAssignments], [...newEvents]]
 }
