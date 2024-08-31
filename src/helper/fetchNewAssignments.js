@@ -13,7 +13,7 @@ function useRegex(input) {
   }
 }
 
-export default async function fetchNewAssignments(url, setAssignments, setEvents, currentAssignments = [], currentEvents = []) {
+export default async function fetchNewAssignments(url, currentAssignments = [], currentEvents = []) {
   // Replace 'webcal://' with 'http://'
   var httpUrl = url.replace("webcal://", "http://");
   httpUrl =
@@ -33,13 +33,13 @@ export default async function fetchNewAssignments(url, setAssignments, setEvents
 
     const link = useRegex(event.description);
 
-    const isAssignmentinList = currentAssignments.some(innerList =>
-        innerList.some(item => item.name === event.summary)
-    );
+    
+    const isAssignmentinList = currentAssignments.some(item => item.name === event.summary);
 
-    const isEventinList = currentEvents.some(innerList =>
-        innerList.some(item => item.name === event.summary)
-    );
+    const isEventinList = currentEvents.some(item => item.name === event.summary);
+
+
+    //console.log(isAssignmentinList, isEventinList)
 
     if (
       link.includes("/assignment/") &&
@@ -82,6 +82,7 @@ export default async function fetchNewAssignments(url, setAssignments, setEvents
     ...currentAssignments,
     ...newAssignments
   ];
+  console.log('new', newAssignments)
   
 
   update(dbRef, {assignments: assignments});
