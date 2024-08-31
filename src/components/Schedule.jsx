@@ -271,7 +271,10 @@ const Schedule = ({selectedCalendarDate}) => {
 
   useEffect(() => {
 
-    fetchNewAssignments(calendarUrl, [...assignments], [...events])
+    if(assignments && events){
+      fetchNewAssignments(calendarUrl, [...assignments], [...events])
+    }
+    
   } , [])
 
 
