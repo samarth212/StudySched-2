@@ -41,7 +41,8 @@ const Step2 = ({ setStep, assignments, step, setAssignments }) => {
       <p className="text-blue-500">
         {assignments.length > 0 ? "Upcoming Assignments:" : "No assignments available"}
       </p>
-      {assignments.map((assignment, index) => (
+      <div className="overflow-y-auto max-h-96">
+        {assignments.map((assignment, index) => (
         <div className="card p-4 bg-white my-4 flex items-center justify-between" key={index}>
           <div>
             <p className="text-xs">
@@ -66,6 +67,8 @@ const Step2 = ({ setStep, assignments, step, setAssignments }) => {
           </button>
         </div>
       ))}
+      </div>
+      
       <button
         className="btn btn-block btn-primary mt-4"
         onClick={handlePrioritySubmit}

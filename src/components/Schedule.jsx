@@ -27,6 +27,8 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
+import fetchNewAssignments from "../helper/fetchNewAssignments";
+
 import { message, Popconfirm } from "antd";
 
 const Schedule = ({selectedCalendarDate}) => {
@@ -36,8 +38,10 @@ const Schedule = ({selectedCalendarDate}) => {
   const [finalSchedule, setFinalSchedule] = useState([]);
   const [availableHours, setAvailableHours] = useState(0);
   const [assignments, setAssignments] = useState(false);
+  const [events, setEvents] = useState(false);
   const [newHours, setNewHours] = useState([]);
   const [selectedIndices, setSelectedIndices] = useState([null, null]);
+  const [calendarUrl, setCalendarUrl] = useState(null)
   const dayRefs = useRef([]);
   /*
   useEffect(() => {
@@ -99,6 +103,8 @@ const Schedule = ({selectedCalendarDate}) => {
         if (!currentScheduler) {
           setAvailableHours(snapshot.val().hoursPerDay);
           setAssignments(snapshot.val().assignments);
+          setCalendarUrl(snapshot.val().url)
+          setEvents(snapshot.val().events)
 
           if (assignments && sort) {
             //console.log('hello')
@@ -260,6 +266,13 @@ const Schedule = ({selectedCalendarDate}) => {
     setFinalSchedule(schedule)
     message.success('Item Deleted')
   }
+
+  const [newAssignments, setNewAssignments] = useState([])
+
+  useEffect(() => {
+
+    fetchNewAssignments(calendarUrl, [...assignments], [...events])
+  } , [])
 
 
   return (

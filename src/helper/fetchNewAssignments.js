@@ -1,5 +1,5 @@
 const { parse, Component, Event } = pkg;
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, update } from "firebase/database";
 import { app } from "../auth/firebase";
 import pkg from "ical.js";
 function useRegex(input) {
@@ -13,7 +13,7 @@ function useRegex(input) {
   }
 }
 
-export default async function fetchCalendar(url, setAssignments, setEvents) {
+export default async function fetchNewAssignments(url, setAssignments, setEvents, currentAssignments = [], currentEvents = []) {
   // Replace 'webcal://' with 'http://'
   var httpUrl = url.replace("webcal://", "http://");
   httpUrl =
@@ -33,9 +33,17 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
 
     const link = useRegex(event.description);
 
+    const isAssignmentinList = currentAssignments.some(innerList =>
+        innerList.some(item => item.name === event.summary)
+    );
+
+    const isEventinList = currentEvents.some(innerList =>
+        innerList.some(item => item.name === event.summary)
+    );
+
     if (
       link.includes("/assignment/") &&
-      new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01")
+      new Date(event.endDate.toString().split("T")[0]) > new Date("2019-01-01") && !isAssignmentinList
     ) {
       newAssignments.push({
         name: event.summary,
@@ -49,7 +57,7 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     }
     if (
       !link.includes("/assignment/") &&
-      new Date(event.endDate.toString().split("T")[0]) > new Date("2021-01-01")
+      new Date(event.endDate.toString().split("T")[0]) > new Date("2021-01-01") && !isEventinList
     ) {
       newEvents.push({
         name: event.summary,
@@ -63,22 +71,18 @@ export default async function fetchCalendar(url, setAssignments, setEvents) {
     }
   }
 
-  setAssignments(newAssignments);
-  setEvents(newEvents);
+//   setAssignments(newAssignments);
+//   setEvents(newEvents);
   const db = getDatabase(app);
+  const dbRef = ref(
+    db,
+    "users/" + localStorage.getItem("uid") + "/activities"
+  );
+  const assignments = [
+    ...currentAssignments,
+    ...newAssignments
+  ];
+  
 
-  let tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-  tomorrow = tomorrow.toISOString()
-
-  set(ref(db, "users/" + localStorage.getItem("uid") + "/activities"), {
-    assignments: newAssignments,
-    events: newEvents,
-    hoursPerDay: 4,
-    todo: "",
-    scheduler: null,
-    tomorrow: tomorrow,
-    url: url,
-  });
+  update(dbRef, {assignments: assignments});
 }
