@@ -462,7 +462,7 @@ const Schedule = ({selectedCalendarDate}) => {
         onClose={() => setShowModal(false)}
         assignment={selectedAssignment}
       />
-      <NewAssignments show={showNewAssignments} onClose={() => setShowNewAssignments(false)}></NewAssignments>
+      <NewAssignments show={showNewAssignments} onClose={() => setShowNewAssignments(false)} oldAssignments={ assignments? [...assignments]: []}fetchedAssignments={newAssignments? [...newAssignments]: []} scheduler={finalSchedule[0]? [...finalSchedule]: []} setScheduler={updateMovedFinalSchedule}></NewAssignments>
       
     </>
   );

@@ -4,7 +4,7 @@ import { getDatabase, ref, update } from "firebase/database";
 import { app } from "../auth/firebase";
 import { useState, useEffect } from "react";
 
-const NewAssignments = ({ show, onClose, oldAssignments, fetchedAssignments }) => {
+const NewAssignments = ({ show, onClose, oldAssignments, fetchedAssignments, scheduler, setScheduler }) => {
     if (!show) {
         return null;
     }
@@ -13,6 +13,69 @@ const NewAssignments = ({ show, onClose, oldAssignments, fetchedAssignments }) =
 
     const [step, setStep] = useState(1)
     const [assignments, setAssignments] = useState([])
+
+    function allocateAssignment(tempSchedule, assignment){
+
+        console.log(assignment.hoursRequired)
+    
+        let totalHoursAllocated = 0
+        const tempAssignment = {assignment: {...assignment}, ...assignment}
+        tempAssignment.totalNeeded = tempAssignment.assignment.hoursRequired
+        let dayDate = null
+    
+        while(totalHoursAllocated < assignment.hoursRequired){
+    
+          for(let i=0; i<tempSchedule.length; i++){
+            dayDate = tempSchedule[i][0].dateOfCompletion
+            console.log(dayDate, startDate.format("YYYY-MM-DD"))
+            if(dayDate >= startDate.format("YYYY-MM-DD")){
+              console.log('insert here')
+              tempAssignment.hoursSupposedtoWork = 1
+              tempAssignment.dateOfCompletion = dayDate
+              if(dayDate === endDate.format("YYYY-MM-DD")){
+                let remainingHours = assignment.hoursRequired - totalHoursAllocated
+                tempAssignment.hoursSupposedtoWork = remainingHours
+                totalHoursAllocated += remainingHours
+                console.log('this day adds', remainingHours)
+                tempSchedule[i].push({...tempAssignment})
+                break;
+              }
+              tempSchedule[i].push({...tempAssignment})
+              totalHoursAllocated++;
+            }
+          };
+          console.log('test', endDate.format("YYYY-MM-DD"), dayDate)
+    
+          if(endDate.format("YYYY-MM-DD") > dayDate && endDate.format("YYYY-MM-DD") > tempSchedule[tempSchedule.length-1][0].dateOfCompletion){
+            while(totalHoursAllocated < assignment.hoursRequired && dayDate < endDate.format("YYYY-MM-DD")){
+              //console.log(dayDate, addOneDay(dayDate))
+              dayDate = addOneDay(dayDate)
+    
+              console.log('push new day')
+              tempAssignment.dateOfCompletion = dayDate
+              tempAssignment.hoursSupposedtoWork = 1
+              
+              if(dayDate === endDate.format("YYYY-MM-DD")){
+                let remainingHours = assignment.hoursRequired - totalHoursAllocated
+                tempAssignment.hoursSupposedtoWork = remainingHours
+                totalHoursAllocated += remainingHours
+                console.log('this day adds', remainingHours)
+              }
+    
+              tempSchedule.push([{...tempAssignment}])
+              totalHoursAllocated++;
+            }
+            
+          }
+    
+        }
+    
+        console.log(tempSchedule);
+        return tempSchedule;
+    
+        
+        
+      };
 
     const handlePrioritySubmit = () => {
         setStep(step + 1);
@@ -34,6 +97,17 @@ const NewAssignments = ({ show, onClose, oldAssignments, fetchedAssignments }) =
           assignments: combined
         });
 
+        
+
+        if(scheduler[0]){
+            let newSchedule = [...scheduler]
+            
+            for(let i=0; i<assignments.length; i++){
+                newSchedule = allocateAssignment([...newSchedule], assignments[i])
+            }
+            setScheduler(newSchedule)
+        }
+        
         onClose()
       };
     
